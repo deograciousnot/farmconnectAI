@@ -10,6 +10,18 @@ Two people. Times are **Nairobi (EAT)**, two hours ahead of the Tunis times on t
 - Ollama explanation in English or Kiswahili, with the number guard and fallback
 - 8 server tests (`npm test`)
 
+## Not yet verified
+
+- **Real Ollama model.** Ollama wasn't installed on the dev laptop. The AI step was tested against a fake Ollama server with the same response format: valid answers were shown, and one with a made-up KES 250,000 was rejected and replaced by the fallback. Install it and run the demo several times before the event.
+- **Look on real phones.** The build and type checks pass, but nobody has viewed the UI on a phone yet.
+
+## Before the event
+
+- **Final Team Confirmation is due 26 Sept.** The team lead submits it with both members' details.
+- The original brief listed "a mobile app" as out of scope. We now ship a PWA (installable web app): one codebase and one link for judges, with no app-store build.
+- Buyers are fictional demo data because there's no public dataset of real buyers' volumes and prices. Say this openly in the demo: prices are real (KAMIS) and real buyers come in through the Buyers tab.
+- Opening on a phone: `npm run dev`, then `http://<laptop-ip>:5173` on the same Wi‑Fi.
+
 ## Split
 
 | | **Person A: AI, data, backend** | **Person B: mobile experience, story, submission** |
