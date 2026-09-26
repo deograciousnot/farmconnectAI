@@ -1,41 +1,54 @@
 import cors from 'cors';
 import express from 'express';
-import markets from '../../data/markets.json' with { type: 'json' };
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { aiStatus, buildEvidence, explain, warmUp } from './ai.js';
+import { BUSINESS_TYPES, addListing, cropPrices, crops, listListings, prices, publicListing } from './data.js';
+import { COUNTIES } from './geo.js';
+import { ASSUMPTIONS, analyze, validateInput } from './matching.js';
 
-type Market = (typeof markets)[number];
-type AnalysisRequest = { crop: string; farmLocation: string; harvestKg: number; harvestDate: string };
+const ENV_FILE = fileURLToPath(new URL('../../.env', import.meta.url));
+if (existsSync(ENV_FILE)) process.loadEnvFile(ENV_FILE);
 
 const app = express();
 const port = Number(process.env.PORT ?? 4000);
-const transportRatePerKm = 0.12;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '20kb' }));
 
-app.get('/health', (_req, res) => res.json({ ok: true, service: 'farmconnect-ai-api' }));
-app.get('/api/markets', (_req, res) => res.json({ markets }));
+app.get('/health', async (_req, res) => res.json({ ok: true, service: 'farmconnect-ai-api', ai: await aiStatus() }));
 
-app.post('/api/analyze', (req, res) => {
-  const input = req.body as Partial<AnalysisRequest>;
-  if (!input.crop || !input.farmLocation || !input.harvestDate || !Number.isFinite(input.harvestKg) || Number(input.harvestKg) <= 0) {
-    return res.status(400).json({ error: 'Please provide crop, location, harvest quantity, and harvest date.' });
-  }
+app.get('/api/meta', (_req, res) => res.json({
+  crops,
+  counties: Object.values(COUNTIES).map(c => c.name).sort(),
+  businessTypes: BUSINESS_TYPES,
+  assumptions: ASSUMPTIONS,
+  priceSource: { name: prices.source, url: prices.sourceUrl, retrievedAt: prices.retrievedAt, method: prices.method }
+}));
 
-  const harvestKg = Number(input.harvestKg);
-  const recommendations = markets.map((market: Market) => {
-    const transportCost = market.distanceKm * harvestKg * transportRatePerKm;
-    const grossRevenue = market.pricePerKg * harvestKg;
-    const estimatedNet = grossRevenue - transportCost;
-    return { ...market, transportCost, grossRevenue, estimatedNet };
-  }).sort((a, b) => b.estimatedNet - a.estimatedNet);
-
-  const best = recommendations[0];
-  return res.json({
-    input: { ...input, harvestKg },
-    assumptions: { transportRatePerKm, currency: 'KES', unit: 'kg' },
-    recommendations,
-    explanation: `${best.name} currently has the strongest estimated net return for ${input.crop}. Its higher price offsets the longer journey, but confirm transport availability and the market price before committing. These are prototype estimates, not guaranteed returns.`
-  });
+app.get('/api/prices/:crop', (req, res) => {
+  const data = cropPrices(req.params.crop);
+  if (!data) return res.status(404).json({ error: 'Unknown crop.' });
+  return res.json({ ...data, source: prices.source, sourceUrl: prices.sourceUrl, retrievedAt: prices.retrievedAt });
 });
 
-app.listen(port, () => console.log(`Farmconnect API listening on http://localhost:${port}`));
+app.get('/api/listings', (req, res) => res.json({ listings: listListings(typeof req.query.crop === 'string' ? req.query.crop : undefined).map(publicListing) }));
+
+app.post('/api/listings', (req, res) => {
+  const result = addListing(req.body ?? {});
+  if ('errors' in result) return res.status(400).json({ error: result.errors.join(' '), errors: result.errors });
+  return res.status(201).json({ listing: publicListing(result.listing) });
+});
+
+app.post('/api/analyze', async (req, res) => {
+  const validated = validateInput(req.body ?? {});
+  if ('error' in validated) return res.status(400).json({ error: validated.error });
+  const analysis = analyze(validated.input);
+  const ai = await explain(analysis);
+  return res.json({ ...analysis, ai: { ...ai, evidenceSent: buildEvidence(analysis) }, priceSource: { name: prices.source, url: prices.sourceUrl, retrievedAt: prices.retrievedAt } });
+});
+
+app.listen(port, () => {
+  console.log(`Farmconnect API listening on http://localhost:${port}`);
+  warmUp();
+});

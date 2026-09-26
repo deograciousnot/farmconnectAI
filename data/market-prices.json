@@ -1,0 +1,2632 @@
+{
+ "source": "KAMIS - Kenya Agricultural Market Information System (Ministry of Agriculture)",
+ "sourceUrl": "https://kamis.kilimo.go.ke/site/market",
+ "retrievedAt": "2026-09-26",
+ "method": "Median wholesale KES/kg per market over the 30 days before retrieval. Rows without a wholesale price are dropped. Markets more than 2x above or below the national median are flagged as outliers.",
+ "crops": [
+  {
+   "id": "watermelon",
+   "label": "Watermelon",
+   "kamisProductId": 150,
+   "nationalMedianPerKg": 35,
+   "markets": [
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 416.67,
+     "observations": 1,
+     "latestDate": "2026-09-14",
+     "outlier": true
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 160,
+     "observations": 1,
+     "latestDate": "2026-09-06",
+     "outlier": true
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 150,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": true
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 100,
+     "observations": 3,
+     "latestDate": "2026-09-20",
+     "outlier": true
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 90,
+     "observations": 4,
+     "latestDate": "2026-09-18",
+     "outlier": true
+    },
+    {
+     "market": "Chebunyo",
+     "county": "Bomet",
+     "wholesalePerKg": 80,
+     "observations": 3,
+     "latestDate": "2026-09-21",
+     "outlier": true
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 75,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Wundanyi",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 70,
+     "observations": 3,
+     "latestDate": "2026-09-18",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 53.33,
+     "observations": 1,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Kimumu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 50,
+     "observations": 1,
+     "latestDate": "2026-08-28",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 48.08,
+     "observations": 4,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 45,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 45,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Sabatia",
+     "county": "Kakamega",
+     "wholesalePerKg": 42.53,
+     "observations": 2,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 40,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 35,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Gakoromone",
+     "county": "Meru",
+     "wholesalePerKg": 35,
+     "observations": 3,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 35,
+     "observations": 7,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 35,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": false
+    },
+    {
+     "market": "Kangemi Market",
+     "county": "Nairobi",
+     "wholesalePerKg": 35,
+     "observations": 2,
+     "latestDate": "2026-09-04",
+     "outlier": false
+    },
+    {
+     "market": "Voi Wholesale",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 35,
+     "observations": 1,
+     "latestDate": "2026-08-28",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 30,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 30,
+     "observations": 1,
+     "latestDate": "2026-08-31",
+     "outlier": false
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 25,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 25,
+     "observations": 7,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 25,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 22.5,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": false
+    },
+    {
+     "market": "Taveta Retail Market",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 22.5,
+     "observations": 2,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 20,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    }
+   ]
+  },
+  {
+   "id": "maize",
+   "label": "Dry maize",
+   "kamisProductId": 1,
+   "nationalMedianPerKg": 44.44,
+   "markets": [
+    {
+     "market": "Kipkaren",
+     "county": "Kakamega",
+     "wholesalePerKg": 80,
+     "observations": 8,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mogogosiek Market",
+     "county": "Bomet",
+     "wholesalePerKg": 54.17,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 50,
+     "observations": 7,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 50,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Chebunyo",
+     "county": "Bomet",
+     "wholesalePerKg": 50,
+     "observations": 3,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 50,
+     "observations": 3,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Kawangware",
+     "county": "Nairobi",
+     "wholesalePerKg": 48.89,
+     "observations": 11,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kibuye",
+     "county": "Kisumu",
+     "wholesalePerKg": 48.89,
+     "observations": 3,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 46.67,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 45.91,
+     "observations": 1,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 45.45,
+     "observations": 11,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 45,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Kangemi Market",
+     "county": "Nairobi",
+     "wholesalePerKg": 44.44,
+     "observations": 3,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Holo",
+     "county": "Kisumu",
+     "wholesalePerKg": 44.44,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Nkubu",
+     "county": "Meru",
+     "wholesalePerKg": 44.44,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kapkwen",
+     "county": "Bomet",
+     "wholesalePerKg": 43.61,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Sabatia",
+     "county": "Kakamega",
+     "wholesalePerKg": 42.22,
+     "observations": 5,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 42.22,
+     "observations": 1,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 42.22,
+     "observations": 5,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Musoli Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 42.22,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Butere Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 42.22,
+     "observations": 3,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 42,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": false
+    },
+    {
+     "market": "Gakoromone",
+     "county": "Meru",
+     "wholesalePerKg": 41.11,
+     "observations": 2,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 41.11,
+     "observations": 4,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 40,
+     "observations": 7,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40,
+     "observations": 14,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Isebania Market",
+     "county": "Migori",
+     "wholesalePerKg": 40,
+     "observations": 1,
+     "latestDate": "2026-09-12",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40,
+     "observations": 1,
+     "latestDate": "2026-08-31",
+     "outlier": false
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 40,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 38.89,
+     "observations": 2,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 38.34,
+     "observations": 2,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Kimumu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 37.5,
+     "observations": 2,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 36.5,
+     "observations": 4,
+     "latestDate": "2026-09-11",
+     "outlier": false
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 36,
+     "observations": 2,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 35,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kamukuywa",
+     "county": "Bungoma",
+     "wholesalePerKg": 35,
+     "observations": 1,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 31,
+     "observations": 1,
+     "latestDate": "2026-09-18",
+     "outlier": false
+    },
+    {
+     "market": "Taveta Retail Market",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 30,
+     "observations": 5,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Katito",
+     "county": "Kisumu",
+     "wholesalePerKg": 1.11,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": true
+    }
+   ]
+  },
+  {
+   "id": "irish-potato",
+   "label": "Irish potato (white)",
+   "kamisProductId": 163,
+   "nationalMedianPerKg": 70,
+   "markets": [
+    {
+     "market": "Kibuye",
+     "county": "Kisumu",
+     "wholesalePerKg": 136,
+     "observations": 3,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 120,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Holo",
+     "county": "Kisumu",
+     "wholesalePerKg": 110,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 96,
+     "observations": 5,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 94,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 85,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kipkaren",
+     "county": "Kakamega",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Butere Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 76.43,
+     "observations": 2,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 75,
+     "observations": 16,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Wundanyi",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 75,
+     "observations": 3,
+     "latestDate": "2026-09-18",
+     "outlier": false
+    },
+    {
+     "market": "Musoli Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 74.29,
+     "observations": 1,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    },
+    {
+     "market": "Sabatia",
+     "county": "Kakamega",
+     "wholesalePerKg": 72.14,
+     "observations": 5,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 71.58,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Diani Market",
+     "county": "Kwale",
+     "wholesalePerKg": 70,
+     "observations": 13,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Nkubu",
+     "county": "Meru",
+     "wholesalePerKg": 70,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 69.33,
+     "observations": 3,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 67,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Gakoromone",
+     "county": "Meru",
+     "wholesalePerKg": 64.29,
+     "observations": 1,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 62.5,
+     "observations": 2,
+     "latestDate": "2026-09-03",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 56,
+     "observations": 5,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 55,
+     "observations": 1,
+     "latestDate": "2026-09-03",
+     "outlier": false
+    },
+    {
+     "market": "Voi Wholesale",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 52.5,
+     "observations": 5,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Lungalunga",
+     "county": "Kwale",
+     "wholesalePerKg": 50,
+     "observations": 2,
+     "latestDate": "2026-09-19",
+     "outlier": false
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 50,
+     "observations": 1,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 50,
+     "observations": 2,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Kangemi Market",
+     "county": "Nairobi",
+     "wholesalePerKg": 50,
+     "observations": 1,
+     "latestDate": "2026-09-03",
+     "outlier": false
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 45,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40.5,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 40,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mogogosiek Market",
+     "county": "Bomet",
+     "wholesalePerKg": 40,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kamukuywa",
+     "county": "Bungoma",
+     "wholesalePerKg": 40,
+     "observations": 1,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 34,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": true
+    }
+   ]
+  },
+  {
+   "id": "tomato",
+   "label": "Tomatoes",
+   "kamisProductId": 61,
+   "nationalMedianPerKg": 57.14,
+   "markets": [
+    {
+     "market": "Kibuye",
+     "county": "Kisumu",
+     "wholesalePerKg": 142.86,
+     "observations": 3,
+     "latestDate": "2026-09-13",
+     "outlier": true
+    },
+    {
+     "market": "Holo",
+     "county": "Kisumu",
+     "wholesalePerKg": 121.43,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 118.63,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": true
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 107.15,
+     "observations": 2,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 92.5,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 90,
+     "observations": 7,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 85,
+     "observations": 2,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Katito",
+     "county": "Kisumu",
+     "wholesalePerKg": 81.25,
+     "observations": 1,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 80,
+     "observations": 5,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 80,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 75,
+     "observations": 5,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Chebunyo",
+     "county": "Bomet",
+     "wholesalePerKg": 75,
+     "observations": 3,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Kamukuywa",
+     "county": "Bungoma",
+     "wholesalePerKg": 75,
+     "observations": 1,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    },
+    {
+     "market": "Mogogosiek Market",
+     "county": "Bomet",
+     "wholesalePerKg": 73.53,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Sabatia",
+     "county": "Kakamega",
+     "wholesalePerKg": 71.43,
+     "observations": 7,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Musoli Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 71.43,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Butere Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 71.43,
+     "observations": 5,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Diani Market",
+     "county": "Kwale",
+     "wholesalePerKg": 65,
+     "observations": 18,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 60,
+     "observations": 3,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 50,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 48.89,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kimumu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 45,
+     "observations": 3,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Gakoromone",
+     "county": "Meru",
+     "wholesalePerKg": 45,
+     "observations": 3,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kipkaren",
+     "county": "Kakamega",
+     "wholesalePerKg": 40,
+     "observations": 8,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Taveta Retail Market",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 40,
+     "observations": 3,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 40,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Lungalunga",
+     "county": "Kwale",
+     "wholesalePerKg": 40,
+     "observations": 2,
+     "latestDate": "2026-09-19",
+     "outlier": false
+    },
+    {
+     "market": "Wundanyi",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 40,
+     "observations": 4,
+     "latestDate": "2026-09-18",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40,
+     "observations": 6,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 35,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 30,
+     "observations": 7,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 28.33,
+     "observations": 3,
+     "latestDate": "2026-09-08",
+     "outlier": true
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 27.5,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": true
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 23,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": true
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 20,
+     "observations": 3,
+     "latestDate": "2026-09-24",
+     "outlier": true
+    },
+    {
+     "market": "Voi Wholesale",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 20,
+     "observations": 10,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 17.14,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": true
+    },
+    {
+     "market": "Nkubu",
+     "county": "Meru",
+     "wholesalePerKg": 6,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    }
+   ]
+  },
+  {
+   "id": "cabbage",
+   "label": "Cabbages",
+   "kamisProductId": 58,
+   "nationalMedianPerKg": 25,
+   "markets": [
+    {
+     "market": "Lungalunga",
+     "county": "Kwale",
+     "wholesalePerKg": 80,
+     "observations": 2,
+     "latestDate": "2026-09-19",
+     "outlier": true
+    },
+    {
+     "market": "Diani Market",
+     "county": "Kwale",
+     "wholesalePerKg": 70,
+     "observations": 3,
+     "latestDate": "2026-09-15",
+     "outlier": true
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 65,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Kipkaren",
+     "county": "Kakamega",
+     "wholesalePerKg": 50,
+     "observations": 8,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kimumu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40,
+     "observations": 5,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40,
+     "observations": 8,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40,
+     "observations": 5,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 40,
+     "observations": 2,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Wundanyi",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 40,
+     "observations": 4,
+     "latestDate": "2026-09-18",
+     "outlier": false
+    },
+    {
+     "market": "Taveta Retail Market",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 40,
+     "observations": 1,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 37.5,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 35,
+     "observations": 11,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 30,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 30,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 27,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Sabatia",
+     "county": "Kakamega",
+     "wholesalePerKg": 26.67,
+     "observations": 6,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 25,
+     "observations": 6,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 25,
+     "observations": 3,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 25,
+     "observations": 4,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Musoli Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 24.27,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Butere Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 23.53,
+     "observations": 5,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 23.34,
+     "observations": 2,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Kapkwen",
+     "county": "Bomet",
+     "wholesalePerKg": 22.5,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 21.67,
+     "observations": 4,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 20,
+     "observations": 7,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 20,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Katito",
+     "county": "Kisumu",
+     "wholesalePerKg": 20,
+     "observations": 1,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 20,
+     "observations": 9,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mogogosiek Market",
+     "county": "Bomet",
+     "wholesalePerKg": 20,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 20,
+     "observations": 5,
+     "latestDate": "2026-09-15",
+     "outlier": false
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 20,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Voi Wholesale",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 16.67,
+     "observations": 5,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Gakoromone",
+     "county": "Meru",
+     "wholesalePerKg": 15,
+     "observations": 3,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 15,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 15,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 10,
+     "observations": 5,
+     "latestDate": "2026-09-25",
+     "outlier": true
+    },
+    {
+     "market": "Chebunyo",
+     "county": "Bomet",
+     "wholesalePerKg": 10,
+     "observations": 3,
+     "latestDate": "2026-09-21",
+     "outlier": true
+    },
+    {
+     "market": "Nkubu",
+     "county": "Meru",
+     "wholesalePerKg": 4,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    }
+   ]
+  },
+  {
+   "id": "beans-rosecoco",
+   "label": "Beans (Rosecoco)",
+   "kamisProductId": 64,
+   "nationalMedianPerKg": 133.33,
+   "markets": [
+    {
+     "market": "Kipkaren",
+     "county": "Kakamega",
+     "wholesalePerKg": 200,
+     "observations": 3,
+     "latestDate": "2026-09-06",
+     "outlier": false
+    },
+    {
+     "market": "Holo",
+     "county": "Kisumu",
+     "wholesalePerKg": 177.78,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 175,
+     "observations": 1,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 162.5,
+     "observations": 2,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 160,
+     "observations": 1,
+     "latestDate": "2026-09-08",
+     "outlier": false
+    },
+    {
+     "market": "Kimumu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 150,
+     "observations": 4,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 150,
+     "observations": 8,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Mogogosiek Market",
+     "county": "Bomet",
+     "wholesalePerKg": 150,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Katito",
+     "county": "Kisumu",
+     "wholesalePerKg": 150,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 146.11,
+     "observations": 8,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 140,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 140,
+     "observations": 2,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 133.33,
+     "observations": 5,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 130.43,
+     "observations": 1,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 130,
+     "observations": 10,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 125,
+     "observations": 3,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 125,
+     "observations": 2,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 120,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Kawangware",
+     "county": "Nairobi",
+     "wholesalePerKg": 115,
+     "observations": 9,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 110,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 100,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Nkubu",
+     "county": "Meru",
+     "wholesalePerKg": 100,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 100,
+     "observations": 1,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    }
+   ]
+  },
+  {
+   "id": "dry-onion",
+   "label": "Dry onions",
+   "kamisProductId": 158,
+   "nationalMedianPerKg": 70,
+   "markets": [
+    {
+     "market": "Mogogosiek Market",
+     "county": "Bomet",
+     "wholesalePerKg": 100,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kapkwen",
+     "county": "Bomet",
+     "wholesalePerKg": 100,
+     "observations": 3,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 100,
+     "observations": 3,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Kamukuywa",
+     "county": "Bungoma",
+     "wholesalePerKg": 100,
+     "observations": 1,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 90,
+     "observations": 5,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 90,
+     "observations": 1,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 90,
+     "observations": 3,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 87.5,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 83.33,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Butere Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 82.5,
+     "observations": 2,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Sabatia",
+     "county": "Kakamega",
+     "wholesalePerKg": 80,
+     "observations": 5,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 80,
+     "observations": 12,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Mukuyu Market",
+     "county": "Muranga",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Musoli Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 80,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Wundanyi",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-09-18",
+     "outlier": false
+    },
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 80,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 75,
+     "observations": 5,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 75,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 70,
+     "observations": 6,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 70,
+     "observations": 8,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Gakoromone",
+     "county": "Meru",
+     "wholesalePerKg": 70,
+     "observations": 3,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 70,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Holo",
+     "county": "Kisumu",
+     "wholesalePerKg": 68.1,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 65,
+     "observations": 3,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Chebunyo",
+     "county": "Bomet",
+     "wholesalePerKg": 65,
+     "observations": 3,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Lungalunga",
+     "county": "Kwale",
+     "wholesalePerKg": 65,
+     "observations": 2,
+     "latestDate": "2026-09-19",
+     "outlier": false
+    },
+    {
+     "market": "Kangemi Market",
+     "county": "Nairobi",
+     "wholesalePerKg": 65,
+     "observations": 1,
+     "latestDate": "2026-09-03",
+     "outlier": false
+    },
+    {
+     "market": "Kimumu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 62.5,
+     "observations": 4,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Diani Market",
+     "county": "Kwale",
+     "wholesalePerKg": 62.5,
+     "observations": 16,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 60,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 60,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Voi Wholesale",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 60,
+     "observations": 5,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 60,
+     "observations": 3,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 60,
+     "observations": 2,
+     "latestDate": "2026-09-05",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 50,
+     "observations": 9,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kipkaren",
+     "county": "Kakamega",
+     "wholesalePerKg": 50,
+     "observations": 8,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Nkubu",
+     "county": "Meru",
+     "wholesalePerKg": 50,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Taveta Retail Market",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 32.5,
+     "observations": 2,
+     "latestDate": "2026-09-23",
+     "outlier": true
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 25,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": true
+    }
+   ]
+  },
+  {
+   "id": "avocado",
+   "label": "Avocado",
+   "kamisProductId": 142,
+   "nationalMedianPerKg": 50,
+   "markets": [
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 250,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": true
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 150,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Kangemi Market",
+     "county": "Nairobi",
+     "wholesalePerKg": 90,
+     "observations": 1,
+     "latestDate": "2026-09-04",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 80,
+     "observations": 6,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 70,
+     "observations": 9,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 60,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 60,
+     "observations": 1,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 60,
+     "observations": 2,
+     "latestDate": "2026-09-11",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 60,
+     "observations": 1,
+     "latestDate": "2026-08-30",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 50,
+     "observations": 17,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kipkaren",
+     "county": "Kakamega",
+     "wholesalePerKg": 50,
+     "observations": 8,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 50,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 50,
+     "observations": 1,
+     "latestDate": "2026-09-06",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 45,
+     "observations": 2,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 45,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 30,
+     "observations": 3,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 25,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Mogogosiek Market",
+     "county": "Bomet",
+     "wholesalePerKg": 20,
+     "observations": 3,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 17.5,
+     "observations": 8,
+     "latestDate": "2026-09-24",
+     "outlier": true
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 15,
+     "observations": 2,
+     "latestDate": "2026-09-03",
+     "outlier": true
+    }
+   ]
+  },
+  {
+   "id": "kales",
+   "label": "Kales (sukuma wiki)",
+   "kamisProductId": 154,
+   "nationalMedianPerKg": 36.07,
+   "markets": [
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 220,
+     "observations": 2,
+     "latestDate": "2026-09-12",
+     "outlier": true
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 140,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": true
+    },
+    {
+     "market": "Kibuye",
+     "county": "Kisumu",
+     "wholesalePerKg": 90,
+     "observations": 2,
+     "latestDate": "2026-09-13",
+     "outlier": true
+    },
+    {
+     "market": "Butere Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 75,
+     "observations": 1,
+     "latestDate": "2026-08-31",
+     "outlier": true
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 70,
+     "observations": 3,
+     "latestDate": "2026-09-15",
+     "outlier": false
+    },
+    {
+     "market": "Sabatia",
+     "county": "Kakamega",
+     "wholesalePerKg": 66.67,
+     "observations": 6,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 60,
+     "observations": 1,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Lubao Livestock Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 60,
+     "observations": 1,
+     "latestDate": "2026-08-29",
+     "outlier": false
+    },
+    {
+     "market": "Musoli Market",
+     "county": "Kakamega",
+     "wholesalePerKg": 58.34,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kakamega Town",
+     "county": "Kakamega",
+     "wholesalePerKg": 55,
+     "observations": 2,
+     "latestDate": "2026-09-19",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 50,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Taveta Retail Market",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 50,
+     "observations": 2,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Diani Market",
+     "county": "Kwale",
+     "wholesalePerKg": 50,
+     "observations": 5,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 50,
+     "observations": 3,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Holo",
+     "county": "Kisumu",
+     "wholesalePerKg": 48.75,
+     "observations": 2,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Muhoroni",
+     "county": "Kisumu",
+     "wholesalePerKg": 48.57,
+     "observations": 2,
+     "latestDate": "2026-09-13",
+     "outlier": false
+    },
+    {
+     "market": "Voi Wholesale",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 40,
+     "observations": 5,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 40,
+     "observations": 1,
+     "latestDate": "2026-08-31",
+     "outlier": false
+    },
+    {
+     "market": "Katito",
+     "county": "Kisumu",
+     "wholesalePerKg": 37.5,
+     "observations": 1,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Wundanyi",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 37.5,
+     "observations": 4,
+     "latestDate": "2026-09-18",
+     "outlier": false
+    },
+    {
+     "market": "Kimumu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 35,
+     "observations": 2,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 35,
+     "observations": 10,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 35,
+     "observations": 5,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Langas",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 35,
+     "observations": 3,
+     "latestDate": "2026-09-17",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 32.5,
+     "observations": 8,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 30,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 30,
+     "observations": 3,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Gakoromone",
+     "county": "Meru",
+     "wholesalePerKg": 30,
+     "observations": 2,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 25,
+     "observations": 7,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Mukuyu Market",
+     "county": "Muranga",
+     "wholesalePerKg": 20,
+     "observations": 1,
+     "latestDate": "2026-09-02",
+     "outlier": false
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 17.5,
+     "observations": 4,
+     "latestDate": "2026-09-26",
+     "outlier": true
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 17.5,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Ngurubani Market",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 15,
+     "observations": 8,
+     "latestDate": "2026-09-25",
+     "outlier": true
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 11.11,
+     "observations": 4,
+     "latestDate": "2026-09-18",
+     "outlier": true
+    },
+    {
+     "market": "Lungalunga",
+     "county": "Kwale",
+     "wholesalePerKg": 10,
+     "observations": 2,
+     "latestDate": "2026-09-19",
+     "outlier": true
+    }
+   ]
+  },
+  {
+   "id": "banana",
+   "label": "Bananas (ripening)",
+   "kamisProductId": 226,
+   "nationalMedianPerKg": 40,
+   "markets": [
+    {
+     "market": "Mabera",
+     "county": "Migori",
+     "wholesalePerKg": 209.05,
+     "observations": 2,
+     "latestDate": "2026-09-17",
+     "outlier": true
+    },
+    {
+     "market": "Ahero",
+     "county": "Kisumu",
+     "wholesalePerKg": 100,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": true
+    },
+    {
+     "market": "Mulot",
+     "county": "Bomet",
+     "wholesalePerKg": 80,
+     "observations": 1,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Mois Bridge",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 70,
+     "observations": 2,
+     "latestDate": "2026-09-14",
+     "outlier": false
+    },
+    {
+     "market": "Kimilili town",
+     "county": "Bungoma",
+     "wholesalePerKg": 70,
+     "observations": 1,
+     "latestDate": "2026-08-27",
+     "outlier": false
+    },
+    {
+     "market": "Kibuye",
+     "county": "Kisumu",
+     "wholesalePerKg": 62.86,
+     "observations": 1,
+     "latestDate": "2026-09-06",
+     "outlier": false
+    },
+    {
+     "market": "Eldoret Main",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 60,
+     "observations": 1,
+     "latestDate": "2026-09-21",
+     "outlier": false
+    },
+    {
+     "market": "Makutano Kirinyaga",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 60,
+     "observations": 4,
+     "latestDate": "2026-09-15",
+     "outlier": false
+    },
+    {
+     "market": "Embu Town",
+     "county": "Embu",
+     "wholesalePerKg": 50,
+     "observations": 3,
+     "latestDate": "2026-09-26",
+     "outlier": false
+    },
+    {
+     "market": "Kamukuywa",
+     "county": "Bungoma",
+     "wholesalePerKg": 50,
+     "observations": 1,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    },
+    {
+     "market": "Kinango",
+     "county": "Kwale",
+     "wholesalePerKg": 45,
+     "observations": 4,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kangeta",
+     "county": "Meru",
+     "wholesalePerKg": 40,
+     "observations": 4,
+     "latestDate": "2026-09-23",
+     "outlier": false
+    },
+    {
+     "market": "Voi Wholesale",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 40,
+     "observations": 2,
+     "latestDate": "2026-09-01",
+     "outlier": false
+    },
+    {
+     "market": "Khayega",
+     "county": "Kakamega",
+     "wholesalePerKg": 30,
+     "observations": 3,
+     "latestDate": "2026-09-20",
+     "outlier": false
+    },
+    {
+     "market": "Kerugoya",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 25,
+     "observations": 7,
+     "latestDate": "2026-09-24",
+     "outlier": false
+    },
+    {
+     "market": "Kagio",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 25,
+     "observations": 3,
+     "latestDate": "2026-09-19",
+     "outlier": false
+    },
+    {
+     "market": "Taveta Retail Market",
+     "county": "Taita-Taveta",
+     "wholesalePerKg": 25,
+     "observations": 1,
+     "latestDate": "2026-09-16",
+     "outlier": false
+    },
+    {
+     "market": "Cheptiret - Uasin Gishu",
+     "county": "Uasin-Gishu",
+     "wholesalePerKg": 20.09,
+     "observations": 2,
+     "latestDate": "2026-09-09",
+     "outlier": false
+    },
+    {
+     "market": "Ndanai Market",
+     "county": "Bomet",
+     "wholesalePerKg": 20,
+     "observations": 5,
+     "latestDate": "2026-09-25",
+     "outlier": false
+    },
+    {
+     "market": "Maua",
+     "county": "Meru",
+     "wholesalePerKg": 20,
+     "observations": 4,
+     "latestDate": "2026-09-22",
+     "outlier": false
+    },
+    {
+     "market": "Kutus",
+     "county": "Kirinyaga",
+     "wholesalePerKg": 17,
+     "observations": 1,
+     "latestDate": "2026-08-31",
+     "outlier": true
+    }
+   ]
+  }
+ ]
+}

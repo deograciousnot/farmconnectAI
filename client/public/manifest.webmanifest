@@ -1,0 +1,10 @@
+{
+  "name": "Farmconnect AI",
+  "short_name": "Farmconnect",
+  "description": "Find buyers for your harvest and compare them after transport costs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f5ef",
+  "theme_color": "#245b40",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

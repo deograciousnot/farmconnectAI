@@ -7,7 +7,9 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/matching.test.ts",
+    "seed:prices": "tsx scripts/fetch-kamis.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
