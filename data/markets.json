@@ -1,6 +1,0 @@
-[
-  { "id": "eldoret", "name": "Eldoret Market", "county": "Uasin Gishu", "distanceKm": 42, "pricePerKg": 62, "demand": "High", "source": "Prototype estimate", "updatedAt": "2026-09-20" },
-  { "id": "kitale", "name": "Kitale Market", "county": "Trans Nzoia", "distanceKm": 78, "pricePerKg": 68, "demand": "Medium", "source": "Prototype estimate", "updatedAt": "2026-09-20" },
-  { "id": "nakuru", "name": "Nakuru Market", "county": "Nakuru", "distanceKm": 155, "pricePerKg": 74, "demand": "High", "source": "Prototype estimate", "updatedAt": "2026-09-20" },
-  { "id": "nairobi", "name": "Nairobi Market", "county": "Nairobi", "distanceKm": 310, "pricePerKg": 88, "demand": "High", "source": "Prototype estimate", "updatedAt": "2026-09-20" }
-]
