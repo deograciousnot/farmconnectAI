@@ -86,23 +86,44 @@ export function analyze(input: AnalysisInput) {
   }
 
   const priceData = cropPrices(input.crop)!;
-  const marketReferences = priceData.markets
+  const publicMarkets = priceData.markets
     .filter(m => !m.outlier && m.observations >= 2 && findCounty(m.county))
     .map(m => {
       const { distanceKm, transportPerKg } = logistics(farm, findCounty(m.county)!, false);
       return { market: m.market, county: findCounty(m.county)!.name, wholesalePerKg: m.wholesalePerKg, distanceKm, transportPerKg, netPerKg: round1(m.wholesalePerKg - transportPerKg - ASSUMPTIONS.handlingKesPerKg), latestDate: m.latestDate };
-    })
-    .sort((a, b) => b.netPerKg - a.netPerKg)
-    .slice(0, 5);
+    });
+  const marketReferences = [...publicMarkets].sort((a, b) => b.netPerKg - a.netPerKg).slice(0, 5);
+  const planNet = plan.reduce((s, p) => s + p.estimatedNet, 0);
 
   return {
     input,
     cropLabel: priceData.label,
     assumptions: ASSUMPTIONS,
     matches,
-    plan: { allocations: plan, allocatedKg: input.harvestKg - remaining, unallocatedKg: remaining, estimatedNet: plan.reduce((s, p) => s + p.estimatedNet, 0) },
+    plan: { allocations: plan, allocatedKg: input.harvestKg - remaining, unallocatedKg: remaining, estimatedNet: planNet },
     marketReferences,
+    comparison: compareWithNearestMarket(publicMarkets, input.harvestKg, planNet, remaining),
     nationalMedianPerKg: priceData.nationalMedianPerKg
+  };
+}
+
+/**
+ * What the farmer would get by taking the whole harvest to the nearest public market that KAMIS reports on,
+ * at its wholesale price minus transport. The typical (median) price among the nearest markets is used.
+ * This is a generous baseline: farmers selling at the farm gate usually get less than wholesale.
+ * Harvest the plan can't place is assumed to go to that market too, so both sides cover the same kilograms.
+ */
+function compareWithNearestMarket(markets: { market: string; county: string; distanceKm: number; wholesalePerKg: number; netPerKg: number }[], harvestKg: number, planNet: number, unallocatedKg: number) {
+  if (!markets.length) return null;
+  const nearestKm = Math.min(...markets.map(m => m.distanceKm));
+  const nearest = markets.filter(m => m.distanceKm === nearestKm).sort((a, b) => a.netPerKg - b.netPerKg);
+  const typical = nearest[Math.floor((nearest.length - 1) / 2)];
+  const baselineNet = Math.round(harvestKg * typical.netPerKg);
+  const planWithRemainder = planNet + Math.round(unallocatedKg * typical.netPerKg);
+  return {
+    market: typical.market, county: typical.county, distanceKm: typical.distanceKm, wholesalePerKg: typical.wholesalePerKg, netPerKg: typical.netPerKg,
+    baselineNet, planNet: planWithRemainder, differenceKes: planWithRemainder - baselineNet,
+    differencePct: baselineNet > 0 ? Math.round(((planWithRemainder - baselineNet) / baselineNet) * 100) : null
   };
 }
 

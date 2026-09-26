@@ -24,6 +24,7 @@ export type Analysis = {
   matches: BuyerMatch[];
   plan: { allocations: { listingId: string; businessName: string; town: string; kg: number; netPerKg: number; estimatedNet: number }[]; allocatedKg: number; unallocatedKg: number; estimatedNet: number };
   marketReferences: { market: string; county: string; wholesalePerKg: number; distanceKm: number; transportPerKg: number; netPerKg: number; latestDate: string }[];
+  comparison: { market: string; county: string; distanceKm: number; wholesalePerKg: number; netPerKg: number; baselineNet: number; planNet: number; differenceKes: number; differencePct: number | null } | null;
   assumptions: { transportKesPerKgKm: number; handlingKesPerKg: number };
   ai: { explanation: { headline: string; points: string[]; nextSteps: string[] }; provider: 'gemini' | 'fallback'; model: string | null; latencyMs: number; fallbackReason?: string; evidenceSent: unknown };
   priceSource: { name: string; url: string; retrievedAt: string };

@@ -87,13 +87,18 @@ function AiCard({ result }: { result: Analysis }) {
 }
 
 function PlanCard({ result }: { result: Analysis }) {
-  const { plan, input } = result;
+  const { plan, input, comparison } = result;
   if (!plan.allocations.length) return null;
   return <section className="card plan">
+    {comparison && <div className={`gain${comparison.differenceKes > 0 ? '' : ' flat'}`}>
+      {comparison.differenceKes > 0
+        ? <><strong>+{kes(comparison.differenceKes)}</strong><span>{comparison.differencePct !== null && `(+${comparison.differencePct}%) `}more than selling everything at {comparison.market}, the nearest public market ({comparison.distanceKm} km)</span></>
+        : <><strong>No gain</strong><span>Selling everything at {comparison.market} ({comparison.distanceKm} km) earns about the same or more: {kes(comparison.baselineNet)}</span></>}
+    </div>}
     <div className="plan-head"><span className="muted">Suggested split for {kg(input.harvestKg)}</span><strong>{kes(plan.estimatedNet)}</strong></div>
     <div className="stack">{plan.allocations.map((a, i) => <span key={a.listingId} className={`seg s${i % 4}`} style={{ flex: a.kg }} />)}{plan.unallocatedKg > 0 && <span className="seg rest" style={{ flex: plan.unallocatedKg }} />}</div>
     {plan.allocations.map((a, i) => <div className="alloc" key={a.listingId}><span className={`dot s${i % 4}`} />{a.businessName}<span className="muted"> · {kg(a.kg)}</span><b>{kes(a.estimatedNet)}</b></div>)}
     {plan.unallocatedKg > 0 && <div className="alloc"><span className="dot rest" />No buyer yet<span className="muted"> · {kg(plan.unallocatedKg)}</span><b>—</b></div>}
-    <p className="muted small">Estimated income after transport, if every buyer confirms.</p>
+    <p className="muted small">Estimated income after transport, if every buyer confirms.{comparison && ` Comparison uses the KAMIS wholesale price at ${comparison.market} (KES ${comparison.wholesalePerKg}/kg) minus transport. Farm-gate prices are usually lower, so the real gain may be bigger.`}</p>
   </section>;
 }

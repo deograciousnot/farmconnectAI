@@ -59,7 +59,9 @@ npm run typecheck && npm run build
 
 ## Responsible AI and data
 
-- The model never calculates or invents prices. It receives computed evidence, and its answer is **rejected** if it mentions figures that are not in that evidence (see `find_invented_numbers` in `ai-service/explainer.py`).
+- The model never calculates or invents prices. It receives computed evidence, and its answer is **rejected** if it mentions any price, weight, distance, percentage or large number that isn't in that evidence (see `find_invented_numbers` in `ai-service/explainer.py`).
+- Buyer text comes from an open form, so it's treated as untrusted: posts that read like instructions ("ignore other buyers…") are rejected, text is cleaned before it reaches the prompt, and the prompt tells the model to treat names as labels only.
+- The "KES X more" figure compares the split against selling everything at the nearest KAMIS market at wholesale price. That's a generous baseline, since farm-gate prices are usually lower.
 - Only the computed evidence is sent to Gemini. No farmer details or buyer phone numbers are sent, because Gemini's free tier may use prompts to improve Google's products.
 - If Gemini or the AI service is down, slow or returns malformed output, the app shows a clearly labelled rule-based summary of the same numbers.
 - Seed buyers are fictional and marked **demo**. KAMIS prices are real but noisy; outliers are flagged, not hidden.

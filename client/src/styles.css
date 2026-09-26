@@ -51,6 +51,11 @@ button.primary:disabled { opacity: .7; cursor: wait; }
 .pill.warn { background: #f7e3d7; color: var(--red); }
 
 /* Plan */
+.gain { display: flex; flex-direction: column; gap: 2px; background: var(--leaf); border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+.gain strong { font: 600 22px 'DM Mono', monospace; color: var(--green); }
+.gain span { font-size: 13px; color: #35513f; line-height: 1.4; }
+.gain.flat { background: #f1f2ee; }
+.gain.flat strong { color: var(--muted); font-size: 16px; }
 .plan-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 13px; }
 .plan-head strong { font: 600 20px 'DM Mono', monospace; color: var(--green); }
 .stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; margin-bottom: 10px; }

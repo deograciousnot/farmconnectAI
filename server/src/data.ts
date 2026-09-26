@@ -36,7 +36,8 @@ const readJson = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8'));
 
 export const prices = readJson<PriceData>(`${DATA_DIR}market-prices.json`);
 const seedListings = readJson<Listing[]>(`${DATA_DIR}buyers.seed.json`);
-const postedListings: Listing[] = existsSync(RUNTIME_FILE) ? readJson<Listing[]>(RUNTIME_FILE) : [];
+// Tests (node --test sets NODE_TEST_CONTEXT) run against seed data only, never against listings posted while demoing.
+const postedListings: Listing[] = !process.env.NODE_TEST_CONTEXT && existsSync(RUNTIME_FILE) ? readJson<Listing[]>(RUNTIME_FILE) : [];
 
 export const crops = prices.crops.map(({ id, label }) => ({ id, label }));
 export const cropPrices = (cropId: string) => prices.crops.find(c => c.id === cropId);
@@ -48,9 +49,22 @@ export function listListings(crop?: string) {
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+// Buyer text comes from an open form and some of it reaches the AI prompt, so treat it as untrusted.
+const INSTRUCTION_LIKE = /\b(ignore|disregard|forget)\b.{0,40}\b(instructions?|rules?|prompt|above|previous|other)\b|\bsystem prompt\b|\byou (must|should) (recommend|choose|pick|rank)\b|\brecommend (me|us|this buyer)\b|\bas an ai\b/i;
+
+/** Collapses whitespace and strips control characters and markup/JSON punctuation. */
+export const cleanText = (value: string, max: number) =>
+  value.replace(/[\u0000-\u001f\u007f]+/g, ' ').replace(/[<>{}[\]`\\]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
+
+/** Text safe to hand to the model as a label: cleaned, and blanked if it reads like an instruction. */
+export const promptSafe = (value: string, max = 60) => {
+  const cleaned = cleanText(value, max);
+  return INSTRUCTION_LIKE.test(cleaned) ? '[text removed]' : cleaned;
+};
+
 /** Validates a buyer post. Returns the saved listing or a list of human-readable problems. */
 export function addListing(body: Record<string, unknown>): { listing: Listing } | { errors: string[] } {
-  const str = (k: string, max = 120) => (typeof body[k] === 'string' ? (body[k] as string).trim().slice(0, max) : '');
+  const str = (k: string, max = 120) => (typeof body[k] === 'string' ? cleanText(body[k] as string, max) : '');
   const num = (k: string) => Number(body[k]);
   const errors: string[] = [];
 
@@ -72,6 +86,7 @@ export function addListing(body: Record<string, unknown>): { listing: Listing } 
   };
 
   if (draft.businessName.length < 3) errors.push('Business name is required.');
+  if ([draft.businessName, draft.town, draft.description].some(t => INSTRUCTION_LIKE.test(t))) errors.push('Please describe your business only. Text that gives instructions is not allowed.');
   if (!BUSINESS_TYPES.includes(draft.businessType)) errors.push('Choose a business type.');
   if (!cropPrices(draft.crop)) errors.push('Choose a supported crop.');
   if (!(draft.pricePerKg > 0 && draft.pricePerKg < 5000)) errors.push('Price per kg must be between 1 and 5,000 KES.');
@@ -83,8 +98,10 @@ export function addListing(body: Record<string, unknown>): { listing: Listing } 
 
   const listing: Listing = { ...draft, county: findCounty(draft.county)!.name, town: draft.town || findCounty(draft.county)!.town, id: randomUUID(), isDemo: false, createdAt: new Date().toISOString() };
   postedListings.unshift(listing);
-  mkdirSync(`${DATA_DIR}runtime`, { recursive: true });
-  writeFileSync(RUNTIME_FILE, JSON.stringify(postedListings, null, 1));
+  if (!process.env.NODE_TEST_CONTEXT) {
+    mkdirSync(`${DATA_DIR}runtime`, { recursive: true });
+    writeFileSync(RUNTIME_FILE, JSON.stringify(postedListings, null, 1));
+  }
   return { listing };
 }
 

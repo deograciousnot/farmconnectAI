@@ -1,3 +1,4 @@
+import { promptSafe } from './data.js';
 import type { Analysis } from './matching.js';
 
 // The AI step lives in the Python service (ai-service/, Gemini). This module builds the evidence it receives
@@ -15,13 +16,17 @@ export function buildEvidence(a: Analysis) {
   return {
     farmer: { crop: a.cropLabel, county: a.input.county, harvestKg: a.input.harvestKg, harvestDate: a.input.harvestDate },
     buyers: a.matches.slice(0, 5).map(m => ({
-      name: m.businessName, town: m.town, type: m.businessType, pricePerKg: m.pricePerKg, distanceKm: m.distanceKm,
+      name: promptSafe(m.businessName), town: promptSafe(m.town, 40), type: m.businessType, pricePerKg: m.pricePerKg, distanceKm: m.distanceKm,
       transportPerKg: m.transportPerKg, netPerKg: m.netPerKg, buysUpToKg: m.demandKg, frequency: m.frequency,
       collectsFromFarm: m.collectsFromFarm, priceVsLocalWholesalePct: m.priceVsWholesalePct
     })),
-    suggestedSplit: a.plan.allocations.map(p => ({ name: p.businessName, kg: p.kg, estimatedNet: p.estimatedNet })),
+    suggestedSplit: a.plan.allocations.map(p => ({ name: promptSafe(p.businessName), kg: p.kg, estimatedNet: p.estimatedNet })),
     unallocatedKg: a.plan.unallocatedKg,
     totalEstimatedNet: a.plan.estimatedNet,
+    comparedWithNearestMarket: a.comparison && {
+      market: promptSafe(a.comparison.market), distanceKm: a.comparison.distanceKm, netPerKg: a.comparison.netPerKg,
+      sellEverythingThereNet: a.comparison.baselineNet, suggestedSplitNet: a.comparison.planNet, differenceKes: a.comparison.differenceKes
+    },
     publicMarketReference: a.marketReferences.slice(0, 3).map(m => ({ market: m.market, county: m.county, wholesalePerKg: m.wholesalePerKg, distanceKm: m.distanceKm, netPerKg: m.netPerKg })),
     assumptions: { transportKesPerKgKm: a.assumptions.transportKesPerKgKm, handlingKesPerKg: a.assumptions.handlingKesPerKg }
   };
@@ -40,12 +45,14 @@ export function fallbackExplanation(a: Analysis, language: 'en' | 'sw'): Explana
     ? [
         `${best.businessName} (${best.town}) inatoa KES ${best.pricePerKg}/kg, takriban KES ${best.netPerKg}/kg baada ya usafiri wa km ${best.distanceKm}.`,
         ...(best.demandKg < a.input.harvestKg ? [`Wanaweza kuchukua kg ${fmt(best.demandKg)} tu, kwa hivyo mgawanyo unaopendekezwa unahusisha wanunuzi ${a.plan.allocations.length}.`] : []),
-        ...(second ? [`Chaguo la pili ni ${second.businessName} (${second.town}) kwa takriban KES ${second.netPerKg}/kg.`] : [])
+        ...(second ? [`Chaguo la pili ni ${second.businessName} (${second.town}) kwa takriban KES ${second.netPerKg}/kg.`] : []),
+        ...(a.comparison && a.comparison.differenceKes > 0 ? [`Hii ni takriban KES ${fmt(a.comparison.differenceKes)} zaidi ya kuuza yote katika soko la ${a.comparison.market}, soko la umma lililo karibu.`] : [])
       ]
     : [
         `${best.businessName} in ${best.town} offers KES ${best.pricePerKg}/kg, about KES ${best.netPerKg}/kg after ${best.distanceKm} km of transport.`,
         ...(best.demandKg < a.input.harvestKg ? [`They only need ${fmt(best.demandKg)} kg, so the suggested split uses ${a.plan.allocations.length} buyers for an estimated KES ${fmt(a.plan.estimatedNet)} in total.`] : []),
-        ...(second ? [`The next option is ${second.businessName} in ${second.town} at about KES ${second.netPerKg}/kg${second.collectsFromFarm ? ', and they collect from the farm' : ''}.`] : [])
+        ...(second ? [`The next option is ${second.businessName} in ${second.town} at about KES ${second.netPerKg}/kg${second.collectsFromFarm ? ', and they collect from the farm' : ''}.`] : []),
+        ...(a.comparison && a.comparison.differenceKes > 0 ? [`That is about KES ${fmt(a.comparison.differenceKes)} more than selling everything at ${a.comparison.market}, the nearest public market.`] : [])
       ];
   return sw
     ? { headline: `${best.businessName} inaonekana kuwa chaguo bora kwa sasa.`, points, nextSteps: ['Piga simu kuthibitisha bei na kiasi kabla ya kuvuna.', 'Thibitisha gharama ya usafiri na jinsi utakavyolipwa.'] }

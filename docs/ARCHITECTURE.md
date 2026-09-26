@@ -20,6 +20,7 @@ Express API ──► data.ts      KAMIS prices + buyer listings (seed JSON + po
 4. **Ranking:** net KES/kg, highest first. Ties go to the nearer buyer.
 5. **Split plan:** fill the best buyers first, up to each buyer's quantity, until the harvest is allocated.
 6. **Price context:** each offer is compared to the KAMIS median wholesale price in the buyer's county, or the national median if that county has no data.
+7. **Value shown to the farmer:** the split is compared with selling the whole harvest at the nearest KAMIS market (the typical price among the nearest markets, minus transport). Harvest the split can't place is counted at that market on both sides.
 
 All assumptions are returned by the API and shown in the app under "How we calculated this".
 
@@ -29,7 +30,8 @@ All assumptions are returned by the API and shown in the app under "How we calcu
 - **Model:** Google Gemini through the `google-genai` SDK, default `gemini-3.1-flash-lite` (fast and cheap). Configure with `GEMINI_API_KEY`, `GEMINI_MODEL` and `GEMINI_TIMEOUT_MS`.
 - **Input:** a compact, rounded evidence JSON built by `buildEvidence` in `server/src/ai.ts`. It's returned to the client as `ai.evidenceSent` so judges can see exactly what the model saw. It contains no personal data.
 - **Output:** Gemini structured output with a Pydantic schema `{ headline, points[], nextSteps[] }`, validated again after the response.
-- **Guardrails:** the system prompt forbids inventing buyers or numbers and forbids telling the farmer what they must do. After generation, every number above 31 must match the evidence within 2%, or the response is rejected.
+- **Guardrails:** the system prompt forbids inventing buyers or numbers, forbids telling the farmer what they must do, and says buyer names are untrusted labels. After generation, every figure (anything with KES, kg, km or %, any decimal, any number above 31, in English or Kiswahili) must match the evidence within 2%, or the response is rejected. Only bare counts and days up to 31 are exempt.
+- **Untrusted input:** buyer names and towns are cleaned (`promptSafe` in `server/src/data.ts`) before they go into the evidence, and posts containing instruction-like text are rejected.
 - **Fallback:** the Node API uses a template summary in English or Kiswahili when the AI service is unreachable, times out or returns 503 (no key, Gemini error, bad format, failed number check). The UI labels it "offline summary" and shows the reason.
 
 ## Why a PWA, not a native app
