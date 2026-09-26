@@ -24,6 +24,7 @@ County coordinates in `server/src/geo.ts` are approximate county headquarters lo
 
 ## Privacy
 
+- AI calls go to Google Gemini. On the free tier, Google may use prompts and responses to improve its products, so we only send the computed evidence: crop, county, quantities, business names and prices. No phone numbers or personal data are sent.
 - No farmer data is stored: analysis requests are not saved.
 - Buyer phone numbers are optional and only shown to farmers if the buyer consents.
 - No authentication in this prototype, so anyone can post a listing. Production would need verification and moderation.

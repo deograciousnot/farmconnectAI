@@ -76,7 +76,7 @@ export function SellView({ meta, lang }: { meta: Meta; lang: Lang }) {
 function AiCard({ result }: { result: Analysis }) {
   const { explanation, provider, model, latencyMs, fallbackReason } = result.ai;
   return <section className="card ai" aria-live="polite">
-    <div className="ai-label"><span className="spark">✦</span> AI advice <span className="pill">{provider === 'ollama' ? `${model} · ${(latencyMs / 1000).toFixed(1)}s` : 'offline summary'}</span></div>
+    <div className="ai-label"><span className="spark">✦</span> AI advice <span className="pill">{provider === 'gemini' ? `${model} · ${(latencyMs / 1000).toFixed(1)}s` : 'offline summary'}</span></div>
     <h3>{explanation.headline}</h3>
     <ul>{explanation.points.map(p => <li key={p}>{p}</li>)}</ul>
     <h4>Before you decide</h4>

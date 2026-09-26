@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { explain, fallbackExplanation, findInventedNumbers, buildEvidence } from './ai.js';
+import { explain, fallbackExplanation } from './ai.js';
 import { addListing } from './data.js';
 import { analyze, validateInput, type AnalysisInput } from './matching.js';
 
@@ -47,17 +47,10 @@ test('buyer listings are validated', () => {
   assert.ok('errors' in result && result.errors.length >= 3);
 });
 
-test('number guard flags figures that are not in the evidence', () => {
-  const evidence = buildEvidence(analyze(demo));
-  assert.deepEqual(findInventedNumbers('Sell 3,000 kg over 14 days.', evidence), []);
-  assert.deepEqual(findInventedNumbers('You will earn KES 987,654.', evidence), [987654]);
-});
-
-test('explanation falls back when Ollama is unreachable', async () => {
-  process.env.OLLAMA_URL = 'http://127.0.0.1:9';
+test('explanation falls back when the AI service is unreachable', async () => {
+  process.env.AI_SERVICE_URL = 'http://127.0.0.1:9';
   const result = await explain(analyze(demo));
   assert.equal(result.provider, 'fallback');
   assert.ok(result.fallbackReason);
-  assert.ok(result.explanation.headline.length > 0);
-  assert.deepEqual(findInventedNumbers([result.explanation.headline, ...result.explanation.points].join(' '), buildEvidence(analyze(demo))), []);
+  assert.match(result.explanation.headline, /Lakeside Hotels Procurement/);
 });

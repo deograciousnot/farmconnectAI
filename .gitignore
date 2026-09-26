@@ -10,3 +10,7 @@ data/runtime/
 .tmp/
 ~$*
 *.tsbuildinfo
+.venv/
+__pycache__/
+.pytest_cache/
+docs/Farmconnect_AI_Teammate_Brief.docx

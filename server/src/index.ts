@@ -2,7 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { aiStatus, buildEvidence, explain, warmUp } from './ai.js';
+import { aiStatus, buildEvidence, explain } from './ai.js';
 import { BUSINESS_TYPES, addListing, cropPrices, crops, listListings, prices, publicListing } from './data.js';
 import { COUNTIES } from './geo.js';
 import { ASSUMPTIONS, analyze, validateInput } from './matching.js';
@@ -48,7 +48,4 @@ app.post('/api/analyze', async (req, res) => {
   return res.json({ ...analysis, ai: { ...ai, evidenceSent: buildEvidence(analysis) }, priceSource: { name: prices.source, url: prices.sourceUrl, retrievedAt: prices.retrievedAt } });
 });
 
-app.listen(port, () => {
-  console.log(`Farmconnect API listening on http://localhost:${port}`);
-  warmUp();
-});
+app.listen(port, () => console.log(`Farmconnect API listening on http://localhost:${port}`));
