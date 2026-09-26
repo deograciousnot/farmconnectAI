@@ -39,7 +39,7 @@ Two people. Times are **Nairobi (EAT)**, two hours ahead of the Tunis times on t
 ## Demo scenario (90 seconds)
 
 1. **Problem (15 s):** "A farmer in Uasin Gishu has 3 tonnes of watermelon. Which buyer pays best after transport? The highest price isn't always the best option."
-2. **Product (45 s):** On a phone, Sell tab → watermelon, Uasin Gishu, 3000 kg → **Find buyers**. Show **+KES 29,180 compared with the nearest market**, then the AI advice and the split: the Kisumu hotel pays most but only takes 800 kg, so the rest goes to Kakamega and Nakuru. Tap **EN → SW** and **Find buyers** again to get the advice in Kiswahili.
+2. **Product (45 s):** On a phone, Sell tab → watermelon, Uasin Gishu, 3000 kg → **Find buyers**. Show **+KES 29,180 compared with the nearest market**, then the AI advice and the split: the Kisumu hotel pays most but only takes 800 kg, so the rest goes to Kakamega and Nakuru. Tap **EN → SW**: the advice re-types in Kiswahili without searching again.
 3. **Proof (20 s):** Buyers tab → post a new demand → run the farmer search again and it appears. Open "How we calculated this" to show the evidence sent to the model.
 4. **Next steps (10 s):** SMS/USSD for feature phones, verified buyers, live KAMIS sync.
 

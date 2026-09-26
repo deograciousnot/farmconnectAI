@@ -34,6 +34,12 @@ All assumptions are returned by the API and shown in the app under "How we calcu
 - **Untrusted input:** buyer names and towns are cleaned (`promptSafe` in `server/src/data.ts`) before they go into the evidence, and posts containing instruction-like text are rejected.
 - **Fallback:** the Node API uses a template summary in English or Kiswahili when the AI service is unreachable, times out or returns 503 (no key, Gemini error, bad format, failed number check). The UI labels it "offline summary" and shows the reason.
 
+## Fast results, then AI advice
+
+`/api/analyze` returns buyers, the split and the gain straight away without calling the model. The app then calls `/api/explain`, which recomputes the same analysis on the server (it never trusts evidence sent by the client) and asks the AI service.
+
+The advice is typed out word by word once it arrives. We don't stream tokens straight from Gemini, because the number check needs the whole answer: live streaming could briefly show a figure that is then rejected. Typing out an answer that has already been checked gives the same feel with no safety cost. Switching EN/SW re-requests only the advice.
+
 ## Why a PWA, not a native app
 
 It works on any Android or iPhone browser, can be added to the home screen, has one codebase and one link for judges, and needs no app-store build. The client is about 51 KB gzipped. SMS/USSD would be the next step for feature phones.

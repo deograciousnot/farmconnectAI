@@ -1,18 +1,37 @@
-import { useState } from 'react';
-import { addDays, api, kes, kg, type Analysis, type Lang, type Meta } from './api';
+import { useEffect, useRef, useState } from 'react';
+import { addDays, api, kes, kg, type AiAdvice, type Analysis, type Lang, type Meta } from './api';
+import { AiCard } from './AiCard';
+
+export type AdviceState = { status: 'loading' } | { status: 'done'; advice: AiAdvice } | { status: 'error'; message: string };
 
 export function SellView({ meta, lang }: { meta: Meta; lang: Lang }) {
   const [form, setForm] = useState({ crop: 'watermelon', county: 'Uasin Gishu', harvestKg: '3000', harvestDate: addDays(14) });
   const [result, setResult] = useState<Analysis | null>(null);
+  const [advice, setAdvice] = useState<AdviceState>({ status: 'loading' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const lastRequest = useRef<object | null>(null);
+  const adviceRequestId = useRef(0);
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm({ ...form, [key]: e.target.value });
+
+  // AI advice loads separately so buyers and the split show immediately. Stale answers (from an earlier
+  // search or language) are ignored.
+  const loadAdvice = (body: object) => {
+    const id = ++adviceRequestId.current;
+    setAdvice({ status: 'loading' });
+    api.explain(body)
+      .then(a => id === adviceRequestId.current && setAdvice({ status: 'done', advice: a }))
+      .catch(err => id === adviceRequestId.current && setAdvice({ status: 'error', message: err instanceof Error ? err.message : 'AI advice failed.' }));
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true); setError('');
+    const body = { ...form, harvestKg: Number(form.harvestKg), language: lang };
     try {
-      setResult(await api.analyze({ ...form, harvestKg: Number(form.harvestKg), language: lang }));
+      setResult(await api.analyze(body));
+      lastRequest.current = body;
+      loadAdvice(body);
       setTimeout(() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' }), 50);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed.');
@@ -20,6 +39,11 @@ export function SellView({ meta, lang }: { meta: Meta; lang: Lang }) {
       setLoading(false);
     }
   };
+
+  // Switching EN/SW re-asks the AI for the current results; no need to search again.
+  useEffect(() => {
+    if (lastRequest.current) loadAdvice({ ...lastRequest.current, language: lang });
+  }, [lang]);
 
   return <>
     <form className="card form" onSubmit={submit}>
@@ -31,12 +55,12 @@ export function SellView({ meta, lang }: { meta: Meta; lang: Lang }) {
         <label>Harvest (kg)<input type="number" inputMode="numeric" min="10" value={form.harvestKg} onChange={set('harvestKg')} required /></label>
         <label>Ready on<input type="date" value={form.harvestDate} onChange={set('harvestDate')} required /></label>
       </div>
-      <button className="primary" disabled={loading}>{loading ? 'Finding buyers and asking AI…' : 'Find buyers'}</button>
+      <button className="primary" disabled={loading}>{loading ? 'Finding buyers…' : 'Find buyers'}</button>
       {error && <p className="error" role="alert">{error}</p>}
     </form>
 
     {result && <div id="results">
-      <AiCard result={result} />
+      <AiCard state={advice} />
       <PlanCard result={result} />
 
       <h3 className="section">Buyers for your {result.cropLabel.toLowerCase()} <span>{result.matches.length}</span></h3>
@@ -67,23 +91,10 @@ export function SellView({ meta, lang }: { meta: Meta; lang: Lang }) {
         <summary>How we calculated this</summary>
         <p>Net KES/kg = buyer price − transport − handling. Transport ≈ KES {result.assumptions.transportKesPerKgKm} per kg per km of estimated road distance (zero if the buyer collects). Handling ≈ KES {result.assumptions.handlingKesPerKg}/kg. Distances are estimated between county towns.</p>
         <p>The AI only explains these numbers. It receives the evidence below and its answer is rejected if it mentions figures that are not in it.</p>
-        <pre>{JSON.stringify(result.ai.evidenceSent, null, 1)}</pre>
+        {advice.status === 'done' ? <pre>{JSON.stringify(advice.advice.evidenceSent, null, 1)}</pre> : <p className="muted small">Waiting for the AI step…</p>}
       </details>
     </div>}
   </>;
-}
-
-function AiCard({ result }: { result: Analysis }) {
-  const { explanation, provider, model, latencyMs, fallbackReason } = result.ai;
-  return <section className="card ai" aria-live="polite">
-    <div className="ai-label"><span className="spark">✦</span> AI advice <span className="pill">{provider === 'gemini' ? `${model} · ${(latencyMs / 1000).toFixed(1)}s` : 'offline summary'}</span></div>
-    <h3>{explanation.headline}</h3>
-    <ul>{explanation.points.map(p => <li key={p}>{p}</li>)}</ul>
-    <h4>Before you decide</h4>
-    <ul className="steps">{explanation.nextSteps.map(s => <li key={s}>{s}</li>)}</ul>
-    {provider === 'fallback' && <p className="muted small">AI model unavailable ({fallbackReason}). Showing a rule-based summary of the same numbers.</p>}
-    <p className="muted small">Estimates only. Confirm price, quantity and pickup with the buyer before harvesting.</p>
-  </section>;
 }
 
 function PlanCard({ result }: { result: Analysis }) {

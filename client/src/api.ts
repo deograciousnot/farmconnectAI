@@ -26,8 +26,12 @@ export type Analysis = {
   marketReferences: { market: string; county: string; wholesalePerKg: number; distanceKm: number; transportPerKg: number; netPerKg: number; latestDate: string }[];
   comparison: { market: string; county: string; distanceKm: number; wholesalePerKg: number; netPerKg: number; baselineNet: number; planNet: number; differenceKes: number; differencePct: number | null } | null;
   assumptions: { transportKesPerKgKm: number; handlingKesPerKg: number };
-  ai: { explanation: { headline: string; points: string[]; nextSteps: string[] }; provider: 'gemini' | 'fallback'; model: string | null; latencyMs: number; fallbackReason?: string; evidenceSent: unknown };
   priceSource: { name: string; url: string; retrievedAt: string };
+};
+
+export type AiAdvice = {
+  explanation: { headline: string; points: string[]; nextSteps: string[] };
+  provider: 'gemini' | 'fallback'; model: string | null; latencyMs: number; fallbackReason?: string; evidenceSent: unknown;
 };
 
 export type Listing = {
@@ -53,6 +57,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   meta: () => request<Meta>('/api/meta'),
   analyze: (body: object) => request<Analysis>('/api/analyze', { method: 'POST', body: JSON.stringify(body) }),
+  explain: (body: object) => request<AiAdvice>('/api/explain', { method: 'POST', body: JSON.stringify(body) }),
   listings: () => request<{ listings: Listing[] }>('/api/listings'),
   postListing: (body: object) => request<{ listing: Listing }>('/api/listings', { method: 'POST', body: JSON.stringify(body) }),
   prices: (crop: string) => request<CropPrices>(`/api/prices/${crop}`)

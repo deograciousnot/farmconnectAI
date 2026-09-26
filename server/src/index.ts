@@ -40,12 +40,20 @@ app.post('/api/listings', (req, res) => {
   return res.status(201).json({ listing: publicListing(result.listing) });
 });
 
-app.post('/api/analyze', async (req, res) => {
+// Deterministic results return immediately; the client then asks /api/explain for the AI advice,
+// so farmers see buyers and the split without waiting for the model.
+app.post('/api/analyze', (req, res) => {
+  const validated = validateInput(req.body ?? {});
+  if ('error' in validated) return res.status(400).json({ error: validated.error });
+  return res.json({ ...analyze(validated.input), priceSource: { name: prices.source, url: prices.sourceUrl, retrievedAt: prices.retrievedAt } });
+});
+
+// Recomputes the analysis from the same input rather than trusting evidence sent by the client.
+app.post('/api/explain', async (req, res) => {
   const validated = validateInput(req.body ?? {});
   if ('error' in validated) return res.status(400).json({ error: validated.error });
   const analysis = analyze(validated.input);
-  const ai = await explain(analysis);
-  return res.json({ ...analysis, ai: { ...ai, evidenceSent: buildEvidence(analysis) }, priceSource: { name: prices.source, url: prices.sourceUrl, retrievedAt: prices.retrievedAt } });
+  return res.json({ ...(await explain(analysis)), evidenceSent: buildEvidence(analysis) });
 });
 
 app.listen(port, () => console.log(`Farmconnect API listening on http://localhost:${port}`));

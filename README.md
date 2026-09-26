@@ -55,7 +55,8 @@ npm run typecheck && npm run build
 | GET | `/api/meta` | Crops, counties, business types, assumptions, price source |
 | GET | `/api/prices/:crop` | KAMIS wholesale prices per market |
 | GET / POST | `/api/listings` | Buyer demand posts |
-| POST | `/api/analyze` | `{ crop, county, harvestKg, harvestDate, language: 'en' \| 'sw' }` → matches, split plan, market references, AI explanation and the exact evidence sent to the model |
+| POST | `/api/analyze` | `{ crop, county, harvestKg, harvestDate, language: 'en' \| 'sw' }` → matches, split plan, gain vs nearest market, market references. Instant, no AI. |
+| POST | `/api/explain` | Same body → AI advice (or labelled fallback) and the exact evidence sent to the model. The app calls this right after `/api/analyze`. |
 
 ## Responsible AI and data
 
