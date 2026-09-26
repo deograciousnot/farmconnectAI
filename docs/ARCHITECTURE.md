@@ -6,8 +6,10 @@ Phone browser (PWA)
    ▼
 Express API ──► data.ts      KAMIS prices + buyer listings (seed JSON + posted listings in data/runtime/)
             ├─► matching.ts  eligibility, distance, transport, net KES/kg, greedy split plan
-            └─► ai.ts        evidence → Ollama (/api/chat, JSON schema output)
-                                 └─► number guard ──fail──► rule-based fallback
+            └─► ai.ts        evidence ──HTTP──► Python AI service (ai-service/, FastAPI)
+                   ▲                                   └─► Gemini (structured JSON output)
+                   │                                   └─► number guard
+                   └──── fail / timeout / 503 ──► rule-based fallback (English or Kiswahili)
 ```
 
 ## Matching (deterministic)
@@ -21,13 +23,14 @@ Express API ──► data.ts      KAMIS prices + buyer listings (seed JSON + po
 
 All assumptions are returned by the API and shown in the app under "How we calculated this".
 
-## AI layer
+## AI layer (Python + Gemini)
 
-- **Model:** Ollama, default `llama3.2:3b` (small enough for a laptop CPU). Configure with `OLLAMA_URL` and `OLLAMA_MODEL`.
-- **Input:** a compact, rounded evidence JSON (`buildEvidence`), returned to the client as `ai.evidenceSent` so judges can see exactly what the model saw.
-- **Output:** constrained with Ollama's JSON-schema `format` to `{ headline, points[], nextSteps[] }`.
-- **Guardrails:** the system prompt forbids inventing buyers or numbers and forbids telling the farmer what they must do. After generation, every number above 31 must match the evidence within 2%, or the response is discarded.
-- **Fallback:** a template summary in English or Kiswahili, used on timeout, connection error, bad format or a failed number check. The UI labels it "offline summary" and shows the reason.
+- **Service:** `ai-service/` (FastAPI). `POST /explain` takes `{ evidence, language }` and returns `{ explanation, provider, model, latencyMs }`, or HTTP 503 `{ error }`.
+- **Model:** Google Gemini through the `google-genai` SDK, default `gemini-3.1-flash-lite` (fast and cheap). Configure with `GEMINI_API_KEY`, `GEMINI_MODEL` and `GEMINI_TIMEOUT_MS`.
+- **Input:** a compact, rounded evidence JSON built by `buildEvidence` in `server/src/ai.ts`. It's returned to the client as `ai.evidenceSent` so judges can see exactly what the model saw. It contains no personal data.
+- **Output:** Gemini structured output with a Pydantic schema `{ headline, points[], nextSteps[] }`, validated again after the response.
+- **Guardrails:** the system prompt forbids inventing buyers or numbers and forbids telling the farmer what they must do. After generation, every number above 31 must match the evidence within 2%, or the response is rejected.
+- **Fallback:** the Node API uses a template summary in English or Kiswahili when the AI service is unreachable, times out or returns 503 (no key, Gemini error, bad format, failed number check). The UI labels it "offline summary" and shows the reason.
 
 ## Why a PWA, not a native app
 

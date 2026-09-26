@@ -1,12 +1,12 @@
 import type { Analysis } from './matching.js';
 
-// The model only explains evidence the backend already computed. It never produces prices, buyers or arithmetic.
+// The AI step lives in the Python service (ai-service/, Gemini). This module builds the evidence it receives
+// and falls back to a rule-based summary whenever that service is unavailable, slow or rejects the model output.
 export type Explanation = { headline: string; points: string[]; nextSteps: string[] };
-export type AiResult = { explanation: Explanation; provider: 'ollama' | 'fallback'; model: string | null; latencyMs: number; fallbackReason?: string };
+export type AiResult = { explanation: Explanation; provider: 'gemini' | 'fallback'; model: string | null; latencyMs: number; fallbackReason?: string };
 
-const OLLAMA_URL = () => (process.env.OLLAMA_URL || 'http://localhost:11434').replace(/\/$/, '');
-const OLLAMA_MODEL = () => process.env.OLLAMA_MODEL || 'llama3.2:3b';
-const TIMEOUT_MS = () => Number(process.env.OLLAMA_TIMEOUT_MS || 30_000);
+const AI_SERVICE_URL = () => (process.env.AI_SERVICE_URL || 'http://localhost:8000').replace(/\/$/, '');
+const TIMEOUT_MS = () => Number(process.env.AI_SERVICE_TIMEOUT_MS || 25_000);
 
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
 
@@ -25,35 +25,6 @@ export function buildEvidence(a: Analysis) {
     publicMarketReference: a.marketReferences.slice(0, 3).map(m => ({ market: m.market, county: m.county, wholesalePerKg: m.wholesalePerKg, distanceKm: m.distanceKm, netPerKg: m.netPerKg })),
     assumptions: { transportKesPerKgKm: a.assumptions.transportKesPerKgKm, handlingKesPerKg: a.assumptions.handlingKesPerKg }
   };
-}
-
-const SYSTEM_PROMPT = (language: 'en' | 'sw') => `You advise smallholder farmers in Kenya on where to sell a harvest.
-You receive EVIDENCE as JSON computed by our system. Rules:
-- Use only buyers, markets and numbers that appear in EVIDENCE. Never invent or recalculate prices, distances or totals.
-- Compare options by net KES per kg (price minus transport and handling), how much each buyer can take, and distance.
-- If one buyer cannot take the whole harvest, explain the suggested split.
-- Point out trade-offs, e.g. a higher price far away versus a nearby buyer or one that collects from the farm.
-- Be honest about uncertainty: prices are estimates and buyers must be confirmed.
-- Never tell the farmer what they must do; offer options.
-- Write simply for a farmer with basic literacy. Short sentences.
-- Write in ${language === 'sw' ? 'Kiswahili' : 'English'}.
-Respond as JSON: {"headline": one sentence, "points": 2-4 short sentences, "nextSteps": 2-3 short actions}.`;
-
-const RESPONSE_SCHEMA = {
-  type: 'object',
-  properties: { headline: { type: 'string' }, points: { type: 'array', items: { type: 'string' } }, nextSteps: { type: 'array', items: { type: 'string' } } },
-  required: ['headline', 'points', 'nextSteps']
-};
-
-/**
- * Guard against hallucinated figures: every number above 31 (days/percent-ish small numbers are allowed)
- * must be within 2% of a number in the evidence.
- */
-export function findInventedNumbers(text: string, evidence: unknown) {
-  const allowed = [...JSON.stringify(evidence).matchAll(/-?\d+(?:\.\d+)?/g)].map(m => Math.abs(Number(m[0])));
-  return [...text.matchAll(/\d[\d,]*(?:\.\d+)?/g)]
-    .map(m => Number(m[0].replace(/,/g, '')))
-    .filter(n => n > 31 && !allowed.some(a => Math.abs(a - n) <= Math.max(1, a * 0.02)));
 }
 
 export function fallbackExplanation(a: Analysis, language: 'en' | 'sw'): Explanation {
@@ -83,55 +54,29 @@ export function fallbackExplanation(a: Analysis, language: 'en' | 'sw'): Explana
 
 export async function explain(a: Analysis): Promise<AiResult> {
   const started = Date.now();
-  const evidence = buildEvidence(a);
   const fallback = (reason: string): AiResult => ({ explanation: fallbackExplanation(a, a.input.language), provider: 'fallback', model: null, latencyMs: Date.now() - started, fallbackReason: reason });
   if (process.env.AI_PROVIDER === 'none') return fallback('AI disabled by configuration');
 
   try {
-    const response = await fetch(`${OLLAMA_URL()}/api/chat`, {
+    const response = await fetch(`${AI_SERVICE_URL()}/explain`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(TIMEOUT_MS()),
-      body: JSON.stringify({
-        model: OLLAMA_MODEL(),
-        stream: false,
-        format: RESPONSE_SCHEMA,
-        options: { temperature: 0.2 },
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT(a.input.language) },
-          { role: 'user', content: `EVIDENCE:\n${JSON.stringify(evidence)}` }
-        ]
-      })
+      body: JSON.stringify({ evidence: buildEvidence(a), language: a.input.language })
     });
-    if (!response.ok) return fallback(`Ollama returned HTTP ${response.status}`);
-    const data = (await response.json()) as { message?: { content?: string } };
-    const parsed = JSON.parse(data.message?.content ?? '') as Partial<Explanation>;
-    if (typeof parsed.headline !== 'string' || !Array.isArray(parsed.points) || !Array.isArray(parsed.nextSteps)) return fallback('Model response did not match the expected format');
-
-    const explanation = { headline: parsed.headline, points: parsed.points.map(String).slice(0, 4), nextSteps: parsed.nextSteps.map(String).slice(0, 3) };
-    const invented = findInventedNumbers([explanation.headline, ...explanation.points, ...explanation.nextSteps].join(' '), evidence);
-    if (invented.length) return fallback(`Model mentioned figures not in the evidence (${invented.slice(0, 3).join(', ')})`);
-    return { explanation, provider: 'ollama', model: OLLAMA_MODEL(), latencyMs: Date.now() - started };
+    const data = (await response.json().catch(() => ({}))) as Partial<AiResult> & { error?: string };
+    if (!response.ok || !data.explanation) return fallback(data.error ?? `AI service returned HTTP ${response.status}`);
+    return data as AiResult;
   } catch (err) {
-    const reason = err instanceof Error && err.name === 'TimeoutError' ? `Ollama timed out after ${TIMEOUT_MS()} ms` : 'Ollama is not reachable';
-    return fallback(reason);
+    return fallback(err instanceof Error && err.name === 'TimeoutError' ? `AI service timed out after ${TIMEOUT_MS()} ms` : 'AI service is not reachable');
   }
 }
 
 export async function aiStatus() {
   try {
-    const res = await fetch(`${OLLAMA_URL()}/api/tags`, { signal: AbortSignal.timeout(3000) });
-    const { models = [] } = (await res.json()) as { models?: { name: string }[] };
-    return { provider: 'ollama', model: OLLAMA_MODEL(), reachable: true, modelInstalled: models.some(m => m.name === OLLAMA_MODEL()) };
+    const res = await fetch(`${AI_SERVICE_URL()}/health`, { signal: AbortSignal.timeout(3000) });
+    return { ...(await res.json()), reachable: true };
   } catch {
-    return { provider: 'ollama', model: OLLAMA_MODEL(), reachable: false, modelInstalled: false };
+    return { provider: 'gemini', reachable: false, configured: false };
   }
-}
-
-/** Loads the model into memory at startup so the first farmer request isn't slowed by a cold start. */
-export function warmUp() {
-  if (process.env.AI_PROVIDER === 'none') return;
-  fetch(`${OLLAMA_URL()}/api/generate`, { method: 'POST', body: JSON.stringify({ model: OLLAMA_MODEL(), prompt: '', keep_alive: '30m' }), signal: AbortSignal.timeout(120_000) })
-    .then(r => console.log(r.ok ? `Ollama model ${OLLAMA_MODEL()} loaded` : `Ollama warm-up failed: HTTP ${r.status}`))
-    .catch(() => console.log(`Ollama not reachable at ${OLLAMA_URL()}; using rule-based explanations until it is.`));
 }

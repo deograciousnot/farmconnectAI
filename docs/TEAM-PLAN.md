@@ -7,12 +7,12 @@ Two people. Times are **Nairobi (EAT)**, two hours ahead of the Tunis times on t
 - Mobile PWA with three tabs: **Sell** (farmer), **Buyers** (post demand), **Prices** (KAMIS)
 - Real KAMIS wholesale prices for 10 crops, plus 17 demo buyers
 - Matching, transport estimate, net KES/kg ranking and split plan across buyers
-- Ollama explanation in English or Kiswahili, with the number guard and fallback
-- 8 server tests (`npm test`)
+- Gemini explanation in English or Kiswahili (Python service), with the number guard and fallback
+- 7 Node tests + 6 Python tests (`npm test`)
 
 ## Not yet verified
 
-- **Real Ollama model.** Ollama wasn't installed on the dev laptop. The AI step was tested against a fake Ollama server with the same response format: valid answers were shown, and one with a made-up KES 250,000 was rejected and replaced by the fallback. Install it and run the demo several times before the event.
+- **Real Gemini calls.** There was no API key on the dev laptop. The Python service was tested with a fake Gemini client (valid answer, made-up figure, bad JSON, network error), and end to end without a key (clean fallback). Get a key, put it in `.env` and run the demo several times before the event. If `gemini-3.1-flash-lite` isn't available on your key, set `GEMINI_MODEL` to another model from https://ai.google.dev/gemini-api/docs/models.
 - **Look on real phones.** The build and type checks pass, but nobody has viewed the UI on a phone yet.
 
 ## Before the event
@@ -26,10 +26,10 @@ Two people. Times are **Nairobi (EAT)**, two hours ahead of the Tunis times on t
 
 | | **Person A: AI, data, backend** | **Person B: mobile experience, story, submission** |
 |---|---|---|
-| Owns | `server/`, `data/`, Ollama | `client/`, demo video, slides, submission form |
-| Before the event | Install Ollama, `ollama pull llama3.2:3b`, run the demo scenario 5+ times and tune the prompt in `server/src/ai.ts` until answers are short and correct | Open the app on 2–3 real phones (Android and iPhone), list every layout or usability problem, try "Add to Home Screen" |
+| Owns | `server/`, `ai-service/`, `data/` | `client/`, demo video, slides, submission form |
+| Before the event | Get a Gemini key (https://aistudio.google.com/apikey), set up the Python venv, run the demo scenario 5+ times and tune the prompt in `ai-service/explainer.py` until answers are short and correct | Open the app on 2–3 real phones (Android and iPhone), list every layout or usability problem, try "Add to Home Screen" |
 | Sprint 1–2 | `npm run seed:prices` for fresh data; record which model and timing to disclose | Fix the phone issues; translate the fixed UI labels into Kiswahili (AI output already switches) |
-| Sprint 3 | Make the demo reachable for judges: run on the laptop plus a `cloudflared tunnel --url http://localhost:5173` link, or deploy the API. Test the fallback live by stopping Ollama | Write the story (150-word summary, problem, solution, features); create the slides; plan the 90-second video |
+| Sprint 3 | Make the demo reachable for judges: run on the laptop plus a `cloudflared tunnel --url http://localhost:5173` link, or deploy the API. Test the fallback live by stopping the AI service | Write the story (150-word summary, problem, solution, features); create the slides; plan the 90-second video |
 | Final sprint | Freeze the code at 18:30. Fill in the AI/tool disclosure (below). Check the repo is public or judges have access, and that `.env` is not committed | Record the 90-second video; submit the form by **19:15** at the latest |
 | Both | Rehearse the demo at 18:30 | |
 
@@ -46,7 +46,7 @@ Kenya podium (automatic), **Click Mobile Mobile-First Impact** (Kenya), **Kredet
 
 ## AI and tool disclosure (draft)
 
-- **Model:** Llama 3.2 3B through Ollama, running locally, with JSON-schema structured output. Brev was not used.
+- **Model:** Google Gemini (`gemini-3.1-flash-lite`) through the `google-genai` Python SDK, with Pydantic structured output. Brev was not used.
 - **Data:** KAMIS (Ministry of Agriculture) wholesale prices retrieved 2026-09-26; fictional demo buyers labelled as such.
 - **What the AI does:** it only explains numbers computed by deterministic code. Answers that cite figures not in the evidence are rejected.
 - **Backup plan:** a rule-based summary in English or Kiswahili when the model is unavailable, slow or fails validation.
