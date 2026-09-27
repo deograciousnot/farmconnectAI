@@ -41,6 +41,8 @@ export type AiAdvice = {
   provider: 'gemini' | 'fallback'; model: string | null; latencyMs: number; fallbackReason?: string; evidenceSent: unknown;
 };
 
+export type NegotiationTurn = { role: 'user' | 'assistant'; content: string };
+
 export type RequestStatus = { id: string; listingId: string; businessName: string; kg: number; status: 'pending' | 'accepted' | 'declined'; canReply: boolean };
 export type Demand = { period: string; totalKg: number; filledKg: number; acceptedKg: number; pendingKg: number; remainingKg: number };
 export type ManageView = {
@@ -59,8 +61,19 @@ export type ListingFields = {
 export type Listing = {
   id: string; businessName: string; businessType: string; description: string; crop: string; pricePerKg: number; quantityKg: number;
   frequency: 'once' | 'weekly'; neededFrom: string; neededUntil: string; county: string; town: string; collectsFromFarm: boolean;
-  contactPhone?: string; isDemo: boolean; createdAt: string;
+  contactPhone?: string; showContact?: boolean; isDemo: boolean; createdAt: string;
 };
+
+/** Convert the project's Kenyan local phone format to digits suitable for a wa.me URL. */
+export function whatsappPhone(phone: string): string | null {
+  const trimmed = phone.trim();
+  let digits = trimmed.replace(/\D/g, '');
+  if (trimmed.startsWith('00')) digits = digits.slice(2);
+  else if (trimmed.startsWith('+')) { /* Keep the explicit international country code. */ }
+  else if (digits.startsWith('0')) digits = `254${digits.slice(1)}`;
+  else if (digits.length === 9) digits = `254${digits}`;
+  return digits.length >= 8 && digits.length <= 15 ? digits : null;
+}
 
 export type CropPrices = { label: string; nationalMedianPerKg: number | null; retrievedAt: string; source: string; sourceUrl: string; markets: { market: string; county: string; wholesalePerKg: number; observations: number; latestDate: string; outlier: boolean }[] };
 
@@ -80,6 +93,8 @@ export const api = {
   meta: () => request<Meta>('/api/meta'),
   analyze: (body: object) => request<Analysis>('/api/analyze', { method: 'POST', body: JSON.stringify(body) }),
   explain: (body: object) => request<AiAdvice>('/api/explain', { method: 'POST', body: JSON.stringify(body) }),
+  negotiate: (body: { listingId: string; crop: string; county: string; harvestKg: number; harvestDate: string; language: string; messages: NegotiationTurn[] }) =>
+    request<{ reply: string; model: string | null; latencyMs: number }>('/api/negotiate', { method: 'POST', body: JSON.stringify(body) }),
   understandHarvest: (body: { text?: string; audioBase64?: string; mimeType?: string; uiLang?: string }) => request<Understood<HarvestFields>>('/api/understand/harvest', { method: 'POST', body: JSON.stringify(body) }),
   understandListing: (body: { text?: string; audioBase64?: string; mimeType?: string; uiLang?: string }) => request<Understood<ListingFields>>('/api/understand/listing', { method: 'POST', body: JSON.stringify(body) }),
   listings: () => request<{ listings: Listing[] }>('/api/listings'),

@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-from explainer import ExplainError, explain, model_name  # noqa: E402  (needs env loaded first)
+from explainer import ChatMessage, ExplainError, explain, model_name, negotiate  # noqa: E402  (needs env loaded first)
 from extractor import extract_harvest, extract_listing  # noqa: E402
 
 app = FastAPI(title="Farmconnect AI explanation service")
@@ -24,6 +24,12 @@ app = FastAPI(title="Farmconnect AI explanation service")
 class ExplainRequest(BaseModel):
     evidence: dict
     language: Literal["en", "sw", "mixed"] = "en"
+
+
+class NegotiateRequest(BaseModel):
+    context: dict
+    language: Literal["en", "sw", "mixed"] = "en"
+    messages: list[ChatMessage] = Field(default_factory=list, max_length=20)
 
 
 @app.get("/health")
@@ -81,3 +87,11 @@ async def explain_route(body: ExplainRequest):
     except ExplainError as err:
         # 503 tells the Node API to use its rule-based fallback; the reason is shown to the farmer.
         return JSONResponse(status_code=503, content={"error": str(err)})
+
+
+@app.post("/negotiate")
+async def negotiate_route(body: NegotiateRequest):
+    try:
+        return await negotiate(body.context, body.language, body.messages)
+    except ExplainError as err:
+        return _unavailable(err)
