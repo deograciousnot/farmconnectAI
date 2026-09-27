@@ -1,57 +1,44 @@
-# Team plan: Come Build with AI, Sunday 27 Sept 2026
+# Team plan: final hours, Sunday 27 Sept 2026
 
-Two people. Times are **Nairobi (EAT)**, two hours ahead of the Tunis times on the event site. **Submissions close at 19:30 EAT.**
+Times are **Nairobi (EAT)**, two hours ahead of the Tunis times on the event site.
+**Submit by 19:15 EAT** (the form closes at 19:30). Judging runs 19:45–21:15 EAT: keep the demo link up until then.
 
-## What already works (on `feat/mobile-buyer-network`)
+## What's built
 
-- Mobile PWA with three tabs: **Sell** (farmer), **Buyers** (post demand), **Prices** (KAMIS)
-- Real KAMIS wholesale prices for 10 crops, plus 17 demo buyers
-- Matching, transport estimate, net KES/kg ranking and split plan across buyers
-- Gemini explanation in English or Kiswahili (Python service), with the number guard and fallback
-- 7 Node tests + 6 Python tests (`npm test`)
+- Voice-first PWA: **Sell** (describe → confirm → buyers, AI split and advice → ask buyers to confirm), **Buyers** (speak or paste a WhatsApp message → check → post; manage demand and answer farmers), **Prices** (KAMIS, 63 crops)
+- Gemini understands Kiswahili/English/Sheng speech and text, chooses the split with reasons, and explains in English or Kiswahili
+- Every number calculated by code; AI answers and splits checked against rules; labelled fallback when Gemini is unavailable
+- Live buyer demand: open kg per week, requests and accept/decline between two phones
+- 17 Node + 15 Python tests (`npm test`)
 
-## Not yet verified
+## Checklist
 
-- **Real Gemini calls.** There was no API key on the dev laptop. The Python service was tested with a fake Gemini client (valid answer, made-up figure, bad JSON, network error), and end to end without a key (clean fallback). Get a key, put it in `.env` and run the demo several times before the event. If `gemini-3.1-flash-lite` isn't available on your key, set `GEMINI_MODEL` to another model from https://ai.google.dev/gemini-api/docs/models.
-- **Look on real phones.** The build and type checks pass, but nobody has viewed the UI on a phone yet.
+**Person A (laptop, backend):**
+- [ ] `git pull` on `main`, `npm install`, Python venv set up, Gemini key in `.env`
+- [ ] Delete `data/runtime/` (test posts, including the "ignore other buyers" listing, and test requests)
+- [ ] `npm run dev`, then `cloudflared tunnel --url http://localhost:5173`. Copy the https link. **Don't stop either until 21:15.** Stop the laptop sleeping and keep it charging.
+- [ ] Open http://localhost:4000/health: `"configured": true`
+- [ ] Rehearse the fallback once: stop the AI service, find buyers, check that "offline summary" and "Price-only split" show, then start it again
+- [ ] Paste the link, repo URL and disclosure into the form ([SUBMISSION.md](SUBMISSION.md))
 
-## Before the event
+**Person B (phones, story):**
+- [ ] Open the https link on two phones. Test the mic (allow microphone access), the Kiswahili screens (SW switch) and "Add to Home Screen"
+- [ ] Build the slides from [SUBMISSION.md](SUBMISSION.md)
+- [ ] Record the 90-second video (script in SUBMISSION.md), screen-recording both phones
 
-- **Final Team Confirmation is due 26 Sept.** The team lead submits it with both members' details.
-- The original brief listed "a mobile app" as out of scope. We now ship a PWA (installable web app): one codebase and one link for judges, with no app-store build.
-- Buyers are fictional demo data because there's no public dataset of real buyers' volumes and prices. Say this openly in the demo: prices are real (KAMIS) and real buyers come in through the Buyers tab.
-- Opening on a phone: `npm run dev`, then `http://<laptop-ip>:5173` on the same Wi‑Fi.
+**Both:** rehearse the video script once before recording. Don't hammer Gemini right before judging; the free tier has rate limits.
 
-## Split
+## Two-phone demo
 
-| | **Person A: AI, data, backend** | **Person B: mobile experience, story, submission** |
-|---|---|---|
-| Owns | `server/`, `ai-service/`, `data/` | `client/`, demo video, slides, submission form |
-| Before the event | Get a Gemini key (https://aistudio.google.com/apikey), set up the Python venv, run the demo scenario 5+ times and tune the prompt in `ai-service/explainer.py` until answers are short and correct | Open the app on 2–3 real phones (Android and iPhone), list every layout or usability problem, try "Add to Home Screen" |
-| Sprint 1–2 | `npm run seed:prices` for fresh data; record which model and timing to disclose | Fix the phone issues; translate the fixed UI labels into Kiswahili (AI output already switches) |
-| Sprint 3 | Make the demo reachable for judges: run on the laptop plus a `cloudflared tunnel --url http://localhost:5173` link, or deploy the API. Test the fallback live by stopping the AI service | Write the story (150-word summary, problem, solution, features); create the slides; plan the 90-second video |
-| Final sprint | Freeze the code at 18:30. Fill in the AI/tool disclosure (below). Check the repo is public or judges have access, and that `.env` is not committed | Record the 90-second video; submit the form by **19:15** at the latest |
-| Both | Rehearse the demo at 18:30 | |
+1. **Buyer phone** (Buyers tab): speak or paste *"Webuye Cereals: tunanunua maharagwe kg 600 kila wiki, bei 140 kwa kilo. Tuko Webuye, Bungoma."* ("We buy 600 kg of beans every week at 140 a kilo. We're in Webuye, Bungoma.") → Check your post → Post demand.
+2. **Farmer phone** (Sell tab): tap the mic and say *"Nina magunia 28 ya maharagwe Webuye, nitauza wiki ijayo"* → "Here's what I understood" → **Yes, find buyers**.
+3. Show the AI split (school supplier 2,000 kg + Webuye Cereals 520 kg), the reason on each buyer, and "+KES … more than the nearest market". Tap **SW** to show the advice in Kiswahili.
+4. **Yes, ask them** → buyer phone shows the request → **Accept** → farmer phone shows **✓ Confirmed**, and Webuye Cereals' open demand drops.
 
-## Demo scenario (90 seconds)
+Backup scenario (single phone): watermelon, Uasin Gishu, 3,000 kg. The AI trades a little money for a nearer or collecting buyer because watermelon is perishable, and the card shows what a price-only split would have earned.
 
-1. **Problem (15 s):** "A farmer in Uasin Gishu has 3 tonnes of watermelon. Which buyer pays best after transport? The highest price isn't always the best option."
-2. **Product (45 s):** On a phone, Sell tab → watermelon, Uasin Gishu, 3000 kg → **Find buyers**. Show the AI advice, then the split: the Kisumu hotel pays most but only takes 800 kg, so the rest goes to Kakamega and Nakuru. Tap **EN → SW** and **Find buyers** again to get the advice in Kiswahili.
-3. **Proof (20 s):** Buyers tab → post a new demand → run the farmer search again and it appears. Open "How we calculated this" to show the evidence sent to the model.
-4. **Next steps (10 s):** SMS/USSD for feature phones, verified buyers, live KAMIS sync.
+## If something breaks
 
-## Awards to tick
-
-Kenya podium (automatic), **Click Mobile Mobile-First Impact** (Kenya), **Kredete Financial Inclusion**, **GOMYCODE × NVIDIA Real-World AI Impact**, EY Studio+ Human-Centred Innovation.
-
-## AI and tool disclosure (draft)
-
-- **Model:** Google Gemini (`gemini-3.1-flash-lite`) through the `google-genai` Python SDK, with Pydantic structured output. Brev was not used.
-- **Data:** KAMIS (Ministry of Agriculture) wholesale prices retrieved 2026-09-26; fictional demo buyers labelled as such.
-- **What the AI does:** it only explains numbers computed by deterministic code. Answers that cite figures not in the evidence are rejected.
-- **Backup plan:** a rule-based summary in English or Kiswahili when the model is unavailable, slow or fails validation.
-- **Coding assistant:** built with help from Claude Code.
-
-## Cut if short on time
-
-Kiswahili UI labels → offline caching → Prices tab polish. Never cut: the Sell flow, AI advice with its fallback, or the video.
+- **Gemini down or slow:** the app still works (manual form, price-only split, rule-based advice). Say so. That's the reliability story.
+- **Mic blocked:** you're on http. Use the https tunnel link, or type.
+- **Tunnel link changed:** a free trycloudflare link changes on restart. Update it in the submission if you had to restart.

@@ -1,37 +1,55 @@
 # Architecture
 
 ```text
-Phone browser (PWA)
-   │  /api (same origin, Vite proxy in dev)
+Phone browser (PWA, voice-first)
+   │  /api (same origin; Vite proxy in dev, https tunnel for phones and judges)
    ▼
-Express API ──► data.ts      KAMIS prices + buyer listings (seed JSON + posted listings in data/runtime/)
-            ├─► matching.ts  eligibility, distance, transport, net KES/kg, greedy split plan
-            └─► ai.ts        evidence ──HTTP──► Python AI service (ai-service/, FastAPI)
-                   ▲                                   └─► Gemini (structured JSON output)
-                   │                                   └─► number guard
-                   └──── fail / timeout / 503 ──► rule-based fallback (English or Kiswahili)
+Express API (Node/TypeScript)
+   ├─ understand.ts ──► AI service /extract/*  ──► Gemini (audio or text in, structured JSON out)
+   │                     unit conversion to kg by a fixed table; person confirms
+   ├─ matching.ts       eligible buyers (crop, date, open demand), distance, transport, net KES/kg, price-only split
+   ├─ demand.ts         open demand per buyer per ISO week = demand − bought elsewhere − accepted requests
+   └─ ai.ts ─────────► AI service /explain ──► Gemini (split + reasons + advice as structured JSON)
+                         number check (Python) → split rule check + money calculation (Node)
+                         any failure → price-only split + rule-based summary (English or Kiswahili)
 ```
+
+## The farmer's flow
+
+1. **Describe:** voice note or text. `POST /api/understand/harvest` → Gemini returns crop, place, county, quantity with its unit, date, and anything unclear. Node converts units (90 kg bags for grains and pulses, 50 kg for potatoes, 64 kg tomato crates; unknown sizes are left for the farmer). If the farmer typed digits, the AI's quantity must be one of them.
+2. **Confirm:** "Here's what I understood". The farmer edits anything, and missing fields are highlighted. If the AI is unavailable, the same form is filled in by hand.
+3. **Results, instantly:** `POST /api/analyze` returns buyers and the price-only split without calling the model.
+4. **AI split and advice:** `POST /api/explain` recomputes the analysis on the server (it never trusts evidence from the client) and asks Gemini. The advice types out word by word after it has been checked. We don't stream raw tokens, because the number check needs the whole answer.
+5. **Confirm with buyers:** `POST /api/requests` for each buyer in the split. The farmer's screen polls for answers every 5 seconds.
 
 ## Matching (deterministic)
 
-1. **Eligible buyers:** same crop, and the buyer's date window covers the harvest date (starting up to 3 days after it still counts).
+1. **Eligible buyers:** crop fits (a mixed-beans buyer takes any bean variety), the buyer's date window covers the harvest date (starting up to 3 days after still counts), and at least 10 kg of demand is still open that week.
 2. **Distance:** straight line between county towns × 1.3 road factor, at least 10 km.
 3. **Net KES/kg** = buyer price − transport (0.03 KES per kg per km, or 0 if the buyer collects) − handling (1 KES/kg).
-4. **Ranking:** net KES/kg, highest first. Ties go to the nearer buyer.
-5. **Split plan:** fill the best buyers first, up to each buyer's quantity, until the harvest is allocated.
-6. **Price context:** each offer is compared to the KAMIS median wholesale price in the buyer's county, or the national median if that county has no data.
+4. **Price-only split:** fill the highest net KES/kg buyers first. This is shown as the baseline for the AI's split.
+5. **Price context:** each offer is compared with the KAMIS median wholesale price in the buyer's county, or the national median.
+6. **Gain shown to the farmer:** the chosen split compared with selling everything at the nearest KAMIS market (typical price among the nearest markets, minus transport). Unplaced kg are counted at that market on both sides.
 
-All assumptions are returned by the API and shown in the app under "How we calculated this".
+## Live demand
+
+Buyer demand changes. `demand.ts` tracks, per listing and ISO week (or once for one-off orders):
+`open = demand − kg the buyer reports buying elsewhere − kg from farmer requests the buyer accepted`.
+Pending requests don't reduce demand until accepted. Farmers can't request more than is open. Only the device that created a post holds its private manage code (never sent to other users), and only that code can accept, decline or update demand.
 
 ## AI layer (Python + Gemini)
 
-- **Service:** `ai-service/` (FastAPI). `POST /explain` takes `{ evidence, language }` and returns `{ explanation, provider, model, latencyMs }`, or HTTP 503 `{ error }`.
-- **Model:** Google Gemini through the `google-genai` SDK, default `gemini-3.1-flash-lite` (fast and cheap). Configure with `GEMINI_API_KEY`, `GEMINI_MODEL` and `GEMINI_TIMEOUT_MS`.
-- **Input:** a compact, rounded evidence JSON built by `buildEvidence` in `server/src/ai.ts`. It's returned to the client as `ai.evidenceSent` so judges can see exactly what the model saw. It contains no personal data.
-- **Output:** Gemini structured output with a Pydantic schema `{ headline, points[], nextSteps[] }`, validated again after the response.
-- **Guardrails:** the system prompt forbids inventing buyers or numbers and forbids telling the farmer what they must do. After generation, every number above 31 must match the evidence within 2%, or the response is rejected.
-- **Fallback:** the Node API uses a template summary in English or Kiswahili when the AI service is unreachable, times out or returns 503 (no key, Gemini error, bad format, failed number check). The UI labels it "offline summary" and shows the reason.
+- **Service:** `ai-service/` (FastAPI, `google-genai`). Endpoints `/extract/harvest`, `/extract/listing`, `/explain`. On any problem it returns HTTP 503 with a reason, and Node falls back.
+- **Model:** `gemini-3.1-flash-lite` by default (fast, cheap, accepts audio). Configure with `GEMINI_MODEL`.
+- **Structured output:** Pydantic schemas for every call, validated again after the response.
+- **Evidence:** built by `buildEvidence` in `server/src/ai.ts`. Buyers are referred to as B1…B6 with price, distance, transport, net KES/kg, `canTakeKg`, `alreadyCoveredKg`, frequency, pickup and a short description. It includes the price-only split as a baseline, and whether the crop is perishable. The evidence is shown in the app under "How we calculated this".
+- **Checks:**
+  - *Numbers:* every figure the model writes (KES, kg, km, %, decimals, anything above 31) must match the evidence or the model's own split within 2%. Bare counts and days up to 31 are exempt.
+  - *Split:* known buyer refs only, no duplicates, whole kg ≥ 10, each within the buyer's open demand, total within the harvest. Money is calculated by code.
+  - *Refs:* B1-style refs in the text are replaced with buyer names.
+  - *Untrusted text:* buyer names, towns and descriptions are cleaned (`promptSafe`) and instruction-like posts are rejected at creation.
+- **Fallback:** manual form for understanding; price-only split plus rule-based summary and reasons for advice. The UI labels the source ("✦ AI-suggested split" vs "Price-only split", "offline summary").
 
-## Why a PWA, not a native app
+## Why a PWA
 
-It works on any Android or iPhone browser, can be added to the home screen, has one codebase and one link for judges, and needs no app-store build. The client is about 51 KB gzipped. SMS/USSD would be the next step for feature phones.
+It works on any Android or iPhone browser, can be added to the home screen, is one codebase with one link for judges, and needs no app-store build (about 57 KB gzipped). SMS/USSD would be the next step for feature phones.

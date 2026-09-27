@@ -4,7 +4,7 @@
   "description": "Find buyers for your harvest and compare them after transport costs.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f3f5ef",
-  "theme_color": "#245b40",
+  "background_color": "#f6f2e8",
+  "theme_color": "#1f5a3d",
   "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
 }

@@ -37,6 +37,22 @@ def test_number_guard_allows_evidence_and_flags_invented_figures():
     assert explainer.find_invented_numbers("You will earn KES 987,654.", EVIDENCE) == [987654]
 
 
+def test_number_guard_checks_small_prices_and_units():
+    # Small figures used to slip through because only numbers above 31 were checked.
+    assert explainer.find_invented_numbers("Another buyer pays KES 25/kg.", EVIDENCE) == [25]
+    assert explainer.find_invented_numbers("They pay 20 kg less.", EVIDENCE) == [20]
+    assert explainer.find_invented_numbers("Prices are 12% higher.", EVIDENCE) == [12]
+    assert explainer.find_invented_numbers("Transport is 2.5 per kg.", EVIDENCE) == [2.5]
+    # Rounded evidence, counts and days are fine.
+    assert explainer.find_invented_numbers("About KES 48/kg after transport.", EVIDENCE) == []
+    assert explainer.find_invented_numbers("Split between 3 buyers within 14 days.", EVIDENCE) == []
+
+
+def test_number_guard_understands_kiswahili_units():
+    assert explainer.find_invented_numbers("Wanaweza kuchukua kg 800 tu.", EVIDENCE) == []
+    assert explainer.find_invented_numbers("Wanaweza kuchukua kg 25 tu.", EVIDENCE) == [25]
+
+
 def test_valid_answer_is_returned_with_model_info():
     client = FakeClient({"headline": "Lakeside pays KES 47.6/kg net.", "points": ["They take 800 kg."], "nextSteps": ["Call them."]})
     result = run(explainer.explain(EVIDENCE, "sw", client))
