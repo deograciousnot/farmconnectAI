@@ -48,7 +48,8 @@ ai-service/.venv/Scripts/pip install -r ai-service/requirements.txt   # macOS/Li
 npm run dev                     # starts the app, the API and the AI service
 ```
 
-- App: http://localhost:5173
+- Live demo: https://farmconnect-ai-do0u.onrender.com
+- App (local): http://localhost:5173
 - **On a phone, or for judges:** run `cloudflared tunnel --url http://localhost:5173` and open the `https://…trycloudflare.com` link. Phones only allow the microphone on https.
 - API health: http://localhost:4000/health (shows whether Gemini is configured)
 
