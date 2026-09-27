@@ -29,15 +29,15 @@ export function buildEvidence(a: Analysis) {
   return {
     farmer: { crop: a.cropLabel, perishable: cropPrices(a.input.crop)?.category !== 'grain', county: a.input.county, harvestKg: a.input.harvestKg, harvestDate: a.input.harvestDate },
     buyers: buyers.map((m, i) => ({
-      ref: ref(i), name: promptSafe(m.businessName), town: promptSafe(m.town, 40), type: m.businessType, about: promptSafe(m.description, 140),
+      ref: ref(i), name: redactNegotiationText(promptSafe(m.businessName)), town: redactNegotiationText(promptSafe(m.town, 40)), type: m.businessType, about: redactNegotiationText(promptSafe(m.description, 140)),
       pricePerKg: m.pricePerKg, distanceKm: m.distanceKm, transportPerKg: m.transportPerKg, netPerKg: m.netPerKg,
       canTakeKg: m.demandKg, weeklyDemandKg: m.frequency === 'weekly' ? m.totalDemandKg : undefined, alreadyCoveredKg: m.alreadyCoveredKg,
       frequency: m.frequency, collectsFromFarm: m.collectsFromFarm, priceVsLocalWholesalePct: m.priceVsWholesalePct
     })),
     rulesSplit: a.plan.allocations.map(p => ({ ref: ref(buyers.findIndex(m => m.listingId === p.listingId)), kg: p.kg })),
     rulesSplitUnallocatedKg: a.plan.unallocatedKg,
-    comparedWithNearestMarket: a.comparison && { market: promptSafe(a.comparison.market), distanceKm: a.comparison.distanceKm, netPerKg: a.comparison.netPerKg, sellEverythingThereNet: a.comparison.baselineNet },
-    publicMarketReference: a.marketReferences.slice(0, 3).map(m => ({ market: m.market, county: m.county, wholesalePerKg: m.wholesalePerKg, distanceKm: m.distanceKm, netPerKg: m.netPerKg })),
+    comparedWithNearestMarket: a.comparison && { market: redactNegotiationText(promptSafe(a.comparison.market)), distanceKm: a.comparison.distanceKm, netPerKg: a.comparison.netPerKg, sellEverythingThereNet: a.comparison.baselineNet },
+    publicMarketReference: a.marketReferences.slice(0, 3).map(m => ({ market: redactNegotiationText(promptSafe(m.market)), county: m.county, wholesalePerKg: m.wholesalePerKg, distanceKm: m.distanceKm, netPerKg: m.netPerKg })),
     assumptions: { transportKesPerKgKm: a.assumptions.transportKesPerKgKm, handlingKesPerKg: a.assumptions.handlingKesPerKg }
   };
 }
@@ -148,6 +148,49 @@ export async function explain(a: Analysis): Promise<AiResult> {
   } catch (err) {
     return fallback(err instanceof Error && err.name === 'TimeoutError' ? `AI service timed out after ${TIMEOUT_MS()} ms` : 'AI service is not reachable');
   }
+}
+
+export type NegotiationMessage = { role: 'user' | 'assistant'; content: string };
+
+export const redactNegotiationText = (text: string) => text
+  .replace(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g, '[email removed]')
+  .replace(/(?:\+?\d[\d\s().-]{7,}\d)/g, value => value.replace(/\D/g, '').length >= 9 ? '[phone number removed]' : value)
+  .replace(/\b(?:my name is|jina langu ni)\s+[A-Za-z]+(?:\s+[A-Za-z]+)?/gi, '[name removed]')
+  .replace(/\b(?:I am|I'm)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?/g, '[name removed]');
+
+/** Generates a buyer-specific conversation turn. Contact details are excluded from the AI payload. */
+export async function negotiate(a: Analysis, listingId: string, messages: NegotiationMessage[]) {
+  if (process.env.AI_PROVIDER === 'none') throw new Error('AI negotiation is disabled by configuration.');
+  const buyer = a.matches.find(m => m.listingId === listingId);
+  if (!buyer) throw new Error('That buyer is no longer in this match list. Run the search again.');
+  const context = {
+    crop: a.cropLabel,
+    harvest: { quantityKg: a.input.harvestKg, readyDate: a.input.harvestDate, county: a.input.county },
+    buyer: {
+      name: redactNegotiationText(promptSafe(buyer.businessName, 80)),
+      town: redactNegotiationText(promptSafe(buyer.town, 40)),
+      type: buyer.businessType,
+      about: redactNegotiationText(promptSafe(buyer.description, 140)),
+      offerKesPerKg: buyer.pricePerKg,
+      netKesPerKgAfterEstimatedCosts: buyer.netPerKg,
+      openQuantityKg: buyer.demandKg,
+      frequency: buyer.frequency,
+      collectsFromFarm: buyer.collectsFromFarm
+    },
+    publicMarketReferences: a.marketReferences.slice(0, 3).map(m => ({
+      market: redactNegotiationText(promptSafe(m.market, 50)), county: m.county,
+      wholesaleKesPerKg: m.wholesalePerKg, estimatedNetKesPerKg: m.netPerKg
+    }))
+  };
+  const safeMessages = messages.map(m => ({ role: m.role, content: redactNegotiationText(m.content).slice(0, 800) }));
+  const response = await fetch(`${AI_SERVICE_URL()}/negotiate`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    signal: AbortSignal.timeout(TIMEOUT_MS()),
+    body: JSON.stringify({ context, language: a.input.language, messages: safeMessages })
+  });
+  const data = await response.json().catch(() => ({})) as { reply?: string; model?: string; latencyMs?: number; error?: string };
+  if (!response.ok || !data.reply) throw new Error(data.error ?? `Negotiation AI returned HTTP ${response.status}.`);
+  return { reply: data.reply, model: data.model ?? null, latencyMs: data.latencyMs ?? 0 };
 }
 
 export async function aiStatus() {

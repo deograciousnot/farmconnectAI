@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { addDays, api, kes, kg, stored, type AiAdvice, type Analysis, type HarvestFields, type Meta, type Plan, type RequestStatus, type Understood } from './api';
+import { addDays, api, kes, kg, stored, whatsappPhone, type AiAdvice, type Analysis, type HarvestFields, type Meta, type Plan, type RequestStatus, type Understood } from './api';
 import { AiCard } from './AiCard';
+import { NegotiationChat } from './NegotiationChat';
 import { businessTypeLabel, useT, type ReplyLang } from './i18n';
 import { FieldArt, SparkIcon } from './icons';
 import { SayIt } from './SayIt';
@@ -124,7 +125,14 @@ export function SellView({ meta }: { meta: Meta }) {
       {m.alreadyCoveredKg > 0 && <p className="muted small">{t(
         `Wants ${kg(m.totalDemandKg)}${m.frequency === 'weekly' ? ' a week' : ''}, already has ${kg(m.alreadyCoveredKg)}.`,
         `Anahitaji ${kg(m.totalDemandKg)}${m.frequency === 'weekly' ? ' kwa wiki' : ''}, tayari ana ${kg(m.alreadyCoveredKg)}.`)}</p>}
-      {m.contactPhone && <a className="call" href={`tel:${m.contactPhone}`}>{t('Call', 'Piga simu')} {m.contactPhone}</a>}
+      <details className="negotiation">
+        <summary>{t('Talk through a negotiation with AI', 'Jadili mazungumzo na AI')}</summary>
+        <NegotiationChat input={result.input} listingId={m.listingId} replyLang={language} />
+      </details>
+      {m.contactPhone && <div className="contact-actions">
+        {whatsappPhone(m.contactPhone) && <a className="contact-action whatsapp" href={`https://wa.me/${whatsappPhone(m.contactPhone)}`} target="_blank" rel="noreferrer">{t('WhatsApp', 'WhatsApp')}</a>}
+        <a className="contact-action call" href={`tel:${m.contactPhone}`}>{t('Call', 'Piga simu')}</a>
+      </div>}
     </article>)}
 
     <h3 className="section">{t('Public wholesale markets', 'Masoko ya jumla ya umma')} <span>KAMIS</span></h3>

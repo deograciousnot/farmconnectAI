@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addDays, api, kg, stored, type Listing, type ListingFields, type ManageView, type Meta, type Understood } from './api';
+import { addDays, api, kg, stored, whatsappPhone, type Listing, type ListingFields, type ManageView, type Meta, type Understood } from './api';
 import { businessTypeLabel, useT } from './i18n';
 import { SayIt } from './SayIt';
 
@@ -119,6 +119,10 @@ export function BuyView({ meta }: { meta: Meta }) {
         <div className="net"><strong>{l.pricePerKg}</strong><span>KES/kg</span></div>
       </div>
       <p className="muted small">{kg(l.quantityKg)}{l.frequency === 'weekly' ? t(' per week', ' kwa wiki') : t(' one time', ' mara moja')} · {l.neededFrom} {t('to', 'hadi')} {l.neededUntil}{l.collectsFromFarm ? t(' · collects from farm', ' · anachukua shambani') : ''}</p>
+      {l.showContact && l.contactPhone && <div className="contact-actions">
+        {whatsappPhone(l.contactPhone) && <a className="contact-action whatsapp" href={`https://wa.me/${whatsappPhone(l.contactPhone)}`} target="_blank" rel="noreferrer">{t('WhatsApp', 'WhatsApp')}</a>}
+        <a className="contact-action call" href={`tel:${l.contactPhone}`}>{t('Call', 'Piga simu')}</a>
+      </div>}
     </article>)}
   </>;
 }

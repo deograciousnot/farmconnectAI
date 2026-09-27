@@ -34,12 +34,12 @@ function App() {
         {(['en', 'sw'] as const).map(l => <button key={l} className={lang === l ? 'on' : ''} onClick={() => setLang(l)} aria-pressed={lang === l}>{l.toUpperCase()}</button>)}
       </div>
     </header>
-    <main key={tab} className="fade-in">
+    <main className="fade-in">
       {error && <div className="card"><p className="error">{error}</p><button className="primary" onClick={load}>{t('Retry', 'Jaribu tena')}</button></div>}
       {!meta && !error && <p className="muted center">{t('Loading…', 'Inapakia…')}</p>}
-      {meta && tab === 'sell' && <SellView meta={meta} />}
-      {meta && tab === 'buy' && <BuyView meta={meta} />}
-      {meta && tab === 'prices' && <PricesView meta={meta} />}
+      {meta && <div hidden={tab !== 'sell'}><SellView meta={meta} /></div>}
+      {meta && <div hidden={tab !== 'buy'}><BuyView meta={meta} /></div>}
+      {meta && <div hidden={tab !== 'prices'}><PricesView meta={meta} /></div>}
       <p className="footnote">{t('Decision support only. Prices are estimates. Always confirm with the buyer.', 'Msaada wa kufanya uamuzi tu. Bei ni makadirio. Thibitisha na mnunuzi kila mara.')}</p>
     </main>
     <nav className="tabs">{TABS.map(({ id, label, Icon }) =>

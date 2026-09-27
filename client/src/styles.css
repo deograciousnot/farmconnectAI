@@ -157,6 +157,20 @@ button.link:active { opacity: .6; }
 .facts dd { margin: 3px 0 0; font: 500 12px 'DM Mono', monospace; }
 .facts dd.good { color: var(--green-2); }
 .call { display: block; text-align: center; margin-top: 12px; padding: 12px; border: 1.5px solid var(--green-2); border-radius: 12px; text-decoration: none; font-weight: 700; }
+.contact-actions { display: flex; gap: 8px; margin-top: 12px; }
+.contact-action { flex: 1; display: block; text-align: center; padding: 12px; border: 1.5px solid var(--green-2); border-radius: 12px; text-decoration: none; font-weight: 700; color: var(--green); }
+.contact-actions .call { margin-top: 0; }
+.contact-action.whatsapp { background: var(--green); color: white; }
+.negotiation { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #f6f2e8; }
+.negotiation summary { color: var(--green); font-size: 13px; font-weight: 700; cursor: pointer; }
+.negotiation p { margin: 9px 0 0; font-size: 13.5px; line-height: 1.5; }
+.negotiation-chat { margin-top: 8px; }
+.negotiation-thread { margin: 10px 0; }
+.negotiation-thread .bubble { max-width: 100%; white-space: pre-wrap; }
+.negotiation-reply { display: flex; align-items: flex-end; gap: 8px; }
+.negotiation-reply textarea { min-width: 0; min-height: 68px; margin: 0; font-size: 14px; }
+.negotiation-reply button { min-height: 48px; padding: 0 14px; }
+.negotiation-chat .link { font-size: 12px; }
 
 /* Buyer confirmations */
 .ask { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }

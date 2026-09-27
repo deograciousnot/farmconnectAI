@@ -2,7 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { aiStatus, buildEvidence, explain } from './ai.js';
+import { aiStatus, buildEvidence, explain, negotiate as negotiateWithAi } from './ai.js';
 import { BUSINESS_TYPES, addListing, cropPrices, crops, listListings, prices, publicListing } from './data.js';
 import { createRequest, manageView, requestStatuses, respond, setFilled } from './demand.js';
 import { COUNTIES } from './geo.js';
@@ -18,6 +18,7 @@ const port = Number(process.env.PORT ?? 4000);
 app.use(cors());
 // Voice notes are sent as base64; only that route accepts large bodies.
 app.use(['/api/understand/harvest', '/api/understand/listing'], express.json({ limit: '4mb' }));
+app.use('/api/negotiate', express.json({ limit: '40kb' }));
 app.use(express.json({ limit: '20kb' }));
 
 app.get('/health', async (_req, res) => res.json({ ok: true, service: 'farmconnect-ai-api', ai: await aiStatus() }));
@@ -59,6 +60,37 @@ app.post('/api/explain', async (req, res) => {
   if ('error' in validated) return res.status(400).json({ error: validated.error });
   const analysis = analyze(validated.input);
   return res.json({ ...(await explain(analysis)), evidenceSent: buildEvidence(analysis) });
+});
+
+// Negotiation chat reuses verified match and market data; only short, contact-redacted turns go to Gemini.
+app.post('/api/negotiate', async (req, res) => {
+  const body = req.body ?? {};
+  const validated = validateInput(body);
+  if ('error' in validated) return res.status(400).json({ error: validated.error });
+  if (typeof body.listingId !== 'string' || !body.listingId || body.listingId.length > 100) {
+    return res.status(400).json({ error: 'Choose a buyer to discuss.' });
+  }
+  const messages = body.messages ?? [];
+  if (!Array.isArray(messages) || messages.length > 20) return res.status(400).json({ error: 'This chat is too long. Start a new negotiation chat.' });
+  let totalChars = 0;
+  const turns: { role: 'user' | 'assistant'; content: string }[] = [];
+  for (const message of messages) {
+    if (!message || !['user', 'assistant'].includes(message.role) || typeof message.content !== 'string' || message.content.length > 800) {
+      return res.status(400).json({ error: 'A chat message was invalid or too long.' });
+    }
+    totalChars += message.content.length;
+    turns.push({ role: message.role, content: message.content });
+  }
+  if (totalChars > 8000 || (turns.length > 0 && turns.at(-1)?.role !== 'user')) {
+    return res.status(400).json({ error: 'Send a short message from the farmer to continue.' });
+  }
+  try {
+    const analysis = analyze(validated.input);
+    const response = await negotiateWithAi(analysis, body.listingId, turns);
+    return res.json(response);
+  } catch (err) {
+    return res.status(503).json({ error: err instanceof Error ? err.message : 'Negotiation AI is unavailable.' });
+  }
 });
 
 // AI reads free speech or text and proposes form values. The person always confirms before anything happens.

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildEvidence, compareFor, explain, fallbackExplanation, planFromSplit } from './ai.js';
+import { buildEvidence, compareFor, explain, fallbackExplanation, negotiate, planFromSplit, redactNegotiationText } from './ai.js';
 import { addListing, cropFits, findListing, promptSafe } from './data.js';
 import { createRequest, demandFor, periodKey } from './demand.js';
 import { analyze, validateInput, type AnalysisInput } from './matching.js';
@@ -80,6 +80,42 @@ test('explanation falls back when the AI service is unreachable', async () => {
   assert.equal(result.provider, 'fallback');
   assert.ok(result.fallbackReason);
   assert.match(result.explanation.headline, /Lakeside Hotels Procurement/);
+});
+
+test('negotiation chat removes contact details before any text reaches Gemini', () => {
+  const safe = redactNegotiationText('I am Njeri. Call me at +254 712 345 678 or email njeri@example.com.');
+  assert.match(safe, /\[name removed\]/);
+  assert.match(safe, /\[phone number removed\]/);
+  assert.match(safe, /\[email removed\]/);
+  assert.match(redactNegotiationText('They offered KES 60/kg.'), /KES 60\/kg/);
+});
+
+test('negotiation AI receives only the selected buyer evidence and a redacted chat transcript', async () => {
+  const previousFetch = globalThis.fetch;
+  const previousUrl = process.env.AI_SERVICE_URL;
+  const previousProvider = process.env.AI_PROVIDER;
+  let sent: Record<string, unknown> | undefined;
+  process.env.AI_SERVICE_URL = 'http://ai.test';
+  process.env.AI_PROVIDER = 'gemini';
+  globalThis.fetch = (async (_input, init) => {
+    sent = JSON.parse(String(init?.body)) as Record<string, unknown>;
+    return Response.json({ reply: 'Ask politely about the offer.' });
+  }) as typeof fetch;
+  try {
+    const analysis = analyze(demo);
+    const buyer = analysis.matches[0];
+    await negotiate(analysis, buyer.listingId, [{ role: 'user', content: 'My name is Njeri. Call me at +254 712 345 678. They offer KES 52/kg.' }]);
+    const serialized = JSON.stringify(sent);
+    assert.match(serialized, /\[name removed\]/);
+    assert.match(serialized, /\[phone number removed\]/);
+    assert.doesNotMatch(serialized, /254 712 345 678/);
+    assert.doesNotMatch(serialized, /contactPhone/);
+    assert.equal((sent?.context as { buyer: { name: string } }).buyer.name, buyer.businessName);
+  } finally {
+    globalThis.fetch = previousFetch;
+    if (previousUrl === undefined) delete process.env.AI_SERVICE_URL; else process.env.AI_SERVICE_URL = previousUrl;
+    if (previousProvider === undefined) delete process.env.AI_PROVIDER; else process.env.AI_PROVIDER = previousProvider;
+  }
 });
 
 test('units are converted by code, with unknown sizes left for the person', () => {
