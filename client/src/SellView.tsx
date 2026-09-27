@@ -3,8 +3,8 @@ import { addDays, api, kes, kg, stored, whatsappPhone, type AiAdvice, type Analy
 import { AiCard } from './AiCard';
 import { NegotiationChat } from './NegotiationChat';
 import { businessTypeLabel, useT, type ReplyLang } from './i18n';
-import { FieldArt, SparkIcon } from './icons';
-import { SayIt } from './SayIt';
+import { SparkIcon } from './icons';
+import { SayItDock } from './SayIt';
 
 export type AdviceState = { status: 'loading' } | { status: 'done'; advice: AiAdvice } | { status: 'error'; message: string };
 type Details = { crop: string; county: string; harvestKg: string; harvestDate: string };
@@ -56,31 +56,23 @@ export function SellView({ meta }: { meta: Meta }) {
   const cropLabel = (id: string) => meta.crops.find(c => c.id === id)?.label ?? id;
 
   if (step.name === 'describe') {
-    return <>
-      <section className="hero">
-        <FieldArt />
-        <p className="hero-kicker">Habari, mkulima</p>
-        <p className="hero-line">{t('Find the buyer that pays you most after transport.', 'Pata mnunuzi anayekulipa zaidi baada ya usafiri.')}</p>
-      </section>
-      <SayIt
-        title={t('Where should I sell my harvest?', 'Niuze mavuno yangu wapi?')}
-        subtitle={t('Say what you grow, where, how much and when.', 'Sema unalima nini, wapi, kiasi gani na lini.')}
-        voice
-        placeholder={t('e.g. I have 10 bags of beans in Webuye, ready next week', 'mf. Nina magunia 10 ya maharagwe Webuye, tayari wiki ijayo')}
-        example="Nina magunia kumi ya maharagwe Webuye, nitauza wiki ijayo"
-        understand={input => api.understandHarvest({ ...input, uiLang: t.lang })}
-        onUnderstood={(heard, said) => {
-          const f = heard.fields;
-          setDetails({ crop: f.crop ?? '', county: f.county ?? '', harvestKg: f.harvestKg ? String(f.harvestKg) : '', harvestDate: f.harvestDate ?? '' });
-          setReplyLang(heard.language ?? null);
-          setStep({ name: 'confirm', heard, said });
-        }}
-        onFailed={() => setDetails(d => ({ ...d, harvestDate: d.harvestDate || addDays(14) }))}
-      />
-      <button type="button" className="link" onClick={() => { setDetails({ ...emptyDetails, harvestDate: addDays(14) }); setReplyLang(null); setStep({ name: 'confirm' }); }}>
-        {t('Or fill in the details yourself', 'Au jaza maelezo mwenyewe')}
-      </button>
-    </>;
+    return <SayItDock
+      greeting="Habari, mkulima"
+      prompt={t('Where should I sell my harvest?', 'Niuze mavuno yangu wapi?')}
+      placeholder={t('Say or type what you grow, where, how much and when', 'Sema au andika unalima nini, wapi, kiasi gani na lini')}
+      example="Nina magunia kumi ya maharagwe Webuye, nitauza wiki ijayo"
+      understand={input => api.understandHarvest({ ...input, uiLang: t.lang })}
+      onUnderstood={(heard, said) => {
+        const f = heard.fields;
+        setDetails({ crop: f.crop ?? '', county: f.county ?? '', harvestKg: f.harvestKg ? String(f.harvestKg) : '', harvestDate: f.harvestDate ?? '' });
+        setReplyLang(heard.language ?? null);
+        setStep({ name: 'confirm', heard, said });
+      }}
+      onFailed={() => setDetails(d => ({ ...d, harvestDate: d.harvestDate || addDays(14) }))}
+      manualLabel={t('Fill in myself', 'Jaza mwenyewe')}
+      onManual={() => { setDetails({ ...emptyDetails, harvestDate: addDays(14) }); setReplyLang(null); setStep({ name: 'confirm' }); }}
+      note={t('Prices are estimates. Always confirm with the buyer.', 'Bei ni makadirio. Thibitisha na mnunuzi kila mara.')}
+    />;
   }
 
   if (step.name === 'confirm') {

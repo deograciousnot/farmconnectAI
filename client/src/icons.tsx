@@ -30,6 +30,8 @@ export const MicIcon = ({ size = 28, className }: P) => svg(size, className, <>
 export const StopIcon = ({ size = 26, className }: P) =>
   <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className={className}><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor" /></svg>;
 
+export const PlusIcon = ({ size = 20, className }: P) => svg(size, className, <><path d="M12 5v14" /><path d="M5 12h14" /></>);
+
 export const SendIcon = ({ size = 20, className }: P) => svg(size, className, <><path d="M5 12h13" /><path d="M13 6l6 6-6 6" /></>);
 
 export const SparkIcon = ({ size = 16, className }: P) =>

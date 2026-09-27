@@ -235,3 +235,40 @@ button.primary.small-btn { width: auto; margin: 0; min-height: 38px; box-shadow:
 .more[open] > summary::after, .fold[open] > summary::after { content: ' ▴'; }
 .fold > summary { display: flex; align-items: center; gap: 6px; font-size: 15px; color: var(--ink); }
 .negotiation-title { margin: 0; font-size: 13px; font-weight: 700; color: var(--green); }
+
+/* Minimal Sell screen: a quiet greeting in the middle, one composer docked above the tabs (chat-app style). */
+:root { --dock-space: 200px; }
+/* Only while the Sell screen with the dock is the visible tab. No entrance transform on it, or position: fixed would pin to it. */
+.fade-in > :has(.dock) { animation: none; }
+.app:has(main > :not([hidden]) .dock) main { padding-bottom: var(--dock-space); }
+.app:has(main > :not([hidden]) .dock) .footnote { display: none; }
+.welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: calc(100vh - 60px - 70px - var(--dock-space)); min-height: calc(100dvh - 60px - 70px - var(--dock-space)); padding: 24px 12px; text-align: center; animation: fadeUp .45s ease both; }
+.welcome-mark { position: relative; display: grid; place-items: center; width: 64px; height: 64px; color: var(--green-2); }
+.welcome-mark::before { content: ''; position: absolute; inset: -18px; border-radius: 50%; background: radial-gradient(circle, rgba(226, 181, 62, .22), rgba(143, 194, 122, .12) 45%, transparent 70%); }
+.welcome-mark svg { position: relative; transform-origin: 50% 90%; animation: sway 5s ease-in-out infinite; }
+.welcome-title { margin: 4px 0 0; font: 600 32px/1.1 Fraunces, Georgia, serif; letter-spacing: -.8px; color: var(--ink); }
+.welcome-prompt { margin: 0; max-width: 280px; font-size: 15px; line-height: 1.45; color: var(--muted); }
+
+.dock { position: fixed; left: 0; right: 0; bottom: calc(70px + env(safe-area-inset-bottom)); z-index: 4; max-width: 520px; margin: 0 auto; padding: 0 12px 8px; background: linear-gradient(180deg, rgba(246, 242, 232, 0), var(--bg) 22px); }
+.dock-box { border: 1px solid var(--line); border-radius: 26px; background: var(--surface); box-shadow: 0 1px 2px rgba(45, 55, 30, .05), 0 10px 30px rgba(45, 55, 30, .09); padding: 6px; transition: border-color .15s, box-shadow .15s; }
+.dock-box:focus-within { border-color: #bcd6b0; box-shadow: 0 0 0 4px rgba(46, 125, 79, .1), 0 10px 30px rgba(45, 55, 30, .09); }
+.dock-box.recording { border-color: rgba(177, 69, 47, .35); }
+.dock-try { display: flex; align-items: center; gap: 6px; width: 100%; margin-bottom: 2px; padding: 9px 12px; border: 0; border-radius: 20px; background: var(--gold-bg); color: var(--gold-ink); font: italic 12.5px/1.3 Manrope, system-ui, sans-serif; text-align: left; cursor: pointer; }
+.dock-try svg { flex: none; color: var(--maize); }
+.dock-try span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.dock-box textarea { margin: 0; min-height: 0; max-height: 120px; border: 0; background: none; box-shadow: none; padding: 12px 12px 6px; font-size: 16px; field-sizing: content; }
+.dock-box textarea:focus { box-shadow: none; background: none; }
+.dock-box textarea::placeholder { color: #a39c89; }
+.dock-status { display: flex; align-items: center; gap: 8px; margin: 0; padding: 14px 12px 8px; font-size: 15px; font-weight: 600; color: var(--muted); }
+.rec-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--red); animation: pulse 1s ease-in-out infinite; }
+.dock-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 2px 0; }
+.dock-chip { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px 0 10px; border: 0; border-radius: 999px; background: #f1ecdf; color: #4e5a4c; font: 700 13px Manrope, system-ui, sans-serif; cursor: pointer; transition: background .15s; }
+.dock-chip:active { background: var(--leaf); }
+.dock-chip:disabled { opacity: .5; }
+.dock-go { flex: none; display: grid; place-items: center; width: 46px; height: 46px; border: 0; border-radius: 50%; color: #fff; background: radial-gradient(circle at 35% 30%, #3b8a5a, var(--green)); box-shadow: 0 6px 14px rgba(31, 90, 61, .25); cursor: pointer; transition: transform .1s, background .2s; }
+.dock-go:active { transform: scale(.94); }
+.dock-go:disabled { opacity: .6; }
+.dock-go.on { background: radial-gradient(circle at 35% 30%, #d0613f, var(--red)); box-shadow: 0 0 0 6px rgba(177, 69, 47, .14); }
+.dock-error { margin: 0 6px 8px; padding: 8px 12px; border-radius: 12px; background: var(--red-bg); color: var(--red); font-size: 13.5px; }
+.dock-note { margin: 6px 0 0; text-align: center; font-size: 11px; color: #9a927e; }
+@keyframes sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }

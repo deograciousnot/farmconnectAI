@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Understood } from './api';
 import { useT } from './i18n';
-import { MicIcon, SendIcon, SparkIcon, StopIcon } from './icons';
+import { MicIcon, PlusIcon, SendIcon, SparkIcon, SproutIcon, StopIcon } from './icons';
 
 const MAX_SECONDS = 30;
 
@@ -101,4 +101,76 @@ export function SayIt<F>({ title, subtitle, placeholder, example, voice, underst
     {!text && !busy && <button type="button" className="example" onClick={() => setText(example)}><SparkIcon size={12} /> {t('Try', 'Jaribu')}: “{example}”</button>}
     {(error || mic.error) && <p className="error" role="alert">{error || mic.error}</p>}
   </section>;
+}
+
+type DockProps<F> = Omit<Props<F>, 'title' | 'subtitle' | 'voice'> & {
+  greeting: string;
+  prompt: string;
+  onManual: () => void;
+  manualLabel: string;
+  note?: string;
+};
+
+/**
+ * Minimal, chat-app style version of SayIt for the Sell screen: a quiet greeting in the middle and one
+ * composer docked above the tabs. Empty composer = the round button records a voice note; once you type, it sends.
+ */
+export function SayItDock<F>({ greeting, prompt, placeholder, example, understand, onUnderstood, onFailed, onManual, manualLabel, note }: DockProps<F>) {
+  const t = useT();
+  const [text, setText] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  const run = async (input: Input) => {
+    setBusy(true); setError('');
+    try {
+      onUnderstood(await understand(input), input.text ?? null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t('Could not understand that.', 'Sikuelewa hilo.'));
+      onFailed?.();
+    } finally {
+      setBusy(false);
+    }
+  };
+  const mic = useRecorder((audioBase64, mimeType) => run({ audioBase64, mimeType }), t);
+  const submitText = () => { if (text.trim() && !busy) run({ text }); };
+  const hasText = !!text.trim();
+  const status = busy ? t('Understanding…', 'Ninaelewa…')
+    : mic.recording ? t(`Listening 0:${String(mic.seconds).padStart(2, '0')} · tap to finish`, `Nasikiliza 0:${String(mic.seconds).padStart(2, '0')} · gusa kumaliza`)
+    : null;
+
+  return <>
+    <section className="welcome" aria-labelledby="welcome-title">
+      <span className="welcome-mark"><SproutIcon size={40} /></span>
+      <h1 id="welcome-title" className="welcome-title">{greeting}</h1>
+      <p className="welcome-prompt">{prompt}</p>
+    </section>
+
+    <div className="dock">
+      {(error || mic.error) && <p className="dock-error" role="alert">{error || mic.error}</p>}
+      <div className={`dock-box${mic.recording ? ' recording' : ''}${busy ? ' busy' : ''}`}>
+        {!text && !busy && !mic.recording && <button type="button" className="dock-try" onClick={() => setText(example)}>
+          <SparkIcon size={12} /><span>{t('Try', 'Jaribu')}: “{example}”</span>
+        </button>}
+        {status
+          ? <p className="dock-status" aria-live="polite">{mic.recording && <span className="rec-dot" />}{status}</p>
+          : <textarea rows={1} value={text} onChange={e => setText(e.target.value)} placeholder={placeholder} aria-label={prompt}
+              onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitText(); } }} />}
+        <div className="dock-row">
+          <button type="button" className="dock-chip" onClick={onManual} disabled={busy || mic.recording}>
+            <PlusIcon size={16} />{manualLabel}
+          </button>
+          {hasText && !mic.recording
+            ? <button type="button" className="dock-go" onClick={submitText} disabled={busy} aria-label={t('Send', 'Tuma')}>
+                {busy ? <span className="spinner" /> : <SendIcon size={20} />}
+              </button>
+            : <button type="button" className={`dock-go${mic.recording ? ' on' : ''}`} onClick={mic.recording ? mic.stop : mic.start} disabled={busy}
+                aria-label={mic.recording ? t('Stop recording', 'Acha kurekodi') : t('Record a voice message', 'Rekodi ujumbe wa sauti')}>
+                {busy ? <span className="spinner" /> : mic.recording ? <StopIcon size={18} /> : <MicIcon size={22} />}
+              </button>}
+        </div>
+      </div>
+      {note && <p className="dock-note">{note}</p>}
+    </div>
+  </>;
 }
