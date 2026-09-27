@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Understood } from './api';
 import { useT } from './i18n';
-import { MicIcon, SendIcon, SparkIcon, StopIcon } from './icons';
+import { LogoMark, MicIcon, SendIcon, SparkIcon, StopIcon } from './icons';
 
 const MAX_SECONDS = 30;
 
@@ -52,13 +52,20 @@ type Props<F> = {
   placeholder: string;
   example: string;
   voice?: boolean;
+  /** 'chat': minimal chatbot layout (greeting in the middle, one input bar pinned at the bottom). */
+  layout?: 'card' | 'chat';
+  kicker?: string;
+  /** Extra tappable suggestions for the chat layout (the first is `example`). */
+  examples?: string[];
+  /** Extra chip shown with the suggestions, e.g. "fill in a form instead". */
+  extra?: ReactNode;
   understand: (input: Input) => Promise<Understood<F>>;
   onUnderstood: (result: Understood<F>, said: string | null) => void;
   onFailed?: () => void;
 };
 
 /** Voice-first input, like sending a WhatsApp voice note. The AI's reading goes to the parent to confirm. */
-export function SayIt<F>({ title, subtitle, placeholder, example, voice, understand, onUnderstood, onFailed }: Props<F>) {
+export function SayIt<F>({ title, subtitle, placeholder, example, voice, layout = 'card', kicker, examples = [], extra, understand, onUnderstood, onFailed }: Props<F>) {
   const t = useT();
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
@@ -78,13 +85,46 @@ export function SayIt<F>({ title, subtitle, placeholder, example, voice, underst
   const mic = useRecorder((audioBase64, mimeType) => run({ audioBase64, mimeType }), t);
   const submitText = () => { if (text.trim() && !busy) run({ text }); };
 
+  const recordLabel = mic.recording ? t('Stop recording', 'Acha kurekodi') : t('Record a voice message', 'Rekodi ujumbe wa sauti');
+
+  if (layout === 'chat') {
+    const status = busy ? t('Understanding…', 'Ninaelewa…')
+      : mic.recording ? t(`Recording 0:${String(mic.seconds).padStart(2, '0')} · tap ■ to send`, `Inarekodi 0:${String(mic.seconds).padStart(2, '0')} · gusa ■ kutuma`) : null;
+    return <section className="chat-start">
+      <div className="greet">
+        <LogoMark size={46} />
+        {kicker && <p className="greet-kicker">{kicker}</p>}
+        <h2 className="display">{title}</h2>
+        {subtitle && <p className="muted">{subtitle}</p>}
+      </div>
+      <div className="dock">
+        {!busy && !mic.recording && !text && <div className="suggestions">
+          {[example, ...examples].map(s => <button type="button" key={s} className="chip" onClick={() => setText(s)}><SparkIcon size={11} /> {s}</button>)}
+          {extra}
+        </div>}
+        {(error || mic.error) && <p className="error dock-error" role="alert">{error || mic.error}</p>}
+        {status && <p className="dock-status">{status}</p>}
+        <div className={`chat-bar${busy ? ' busy' : ''}${mic.recording ? ' recording' : ''}`}>
+          <textarea rows={1} value={text} onChange={e => setText(e.target.value)} placeholder={placeholder} aria-label={title}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitText(); } }} />
+          {voice && <button type="button" className={`icon-btn mic${mic.recording ? ' on' : ''}`} onClick={mic.recording ? mic.stop : mic.start} disabled={busy} aria-label={recordLabel}>
+            {mic.recording ? <StopIcon size={18} /> : <MicIcon size={22} />}
+          </button>}
+          <button type="button" className="icon-btn send" disabled={busy || mic.recording || !text.trim()} onClick={submitText} aria-label={t('Send', 'Tuma')}>
+            {busy ? <span className="spinner" /> : <SendIcon />}
+          </button>
+        </div>
+      </div>
+    </section>;
+  }
+
   return <section className="card sayit">
     <h2 className="display">{title}</h2>
     {subtitle && <p className="muted lead">{subtitle}</p>}
 
     {voice && <div className="voice">
       <button type="button" className={`mic-btn${mic.recording ? ' on' : ''}`} onClick={mic.recording ? mic.stop : mic.start} disabled={busy}
-        aria-label={mic.recording ? t('Stop recording', 'Acha kurekodi') : t('Record a voice message', 'Rekodi ujumbe wa sauti')}>
+        aria-label={recordLabel}>
         {mic.recording ? <StopIcon /> : <MicIcon />}
       </button>
       <p className="voice-hint">{busy ? t('Understanding…', 'Ninaelewa…') : mic.recording ? t(`Recording 0:${String(mic.seconds).padStart(2, '0')} · tap to finish`, `Inarekodi 0:${String(mic.seconds).padStart(2, '0')} · gusa kumaliza`) : t('Tap and speak in Kiswahili, English or both', 'Gusa na uongee kwa Kiswahili, Kiingereza au vyote')}</p>

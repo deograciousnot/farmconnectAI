@@ -28,9 +28,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .lang button.on { background: var(--surface); color: var(--green); box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
 
 main { padding: 6px 14px 0; }
-.fade-in > * { animation: fadeUp .35s ease both; }
+/* Opacity only: a transform animation here would break position: fixed (the chat input bar) inside the tabs. */
+.fade-in > * { animation: fadeIn .3s ease both; }
 .fade-in > *:nth-child(2) { animation-delay: .04s; }
 .fade-in > *:nth-child(3) { animation-delay: .08s; }
+.fade-in > .footnote { animation: none; }
 
 /* Surfaces and type */
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); animation: fadeUp .35s ease both; }
@@ -217,6 +219,7 @@ button.primary.small-btn { width: auto; margin: 0; min-height: 38px; box-shadow:
 .pulse { animation: pulse 1.2s ease-in-out infinite; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes shimmer { to { background-position: -200% 0; } }
 @keyframes blink { 50% { opacity: 0; } }
@@ -235,3 +238,30 @@ button.primary.small-btn { width: auto; margin: 0; min-height: 38px; box-shadow:
 .more[open] > summary::after, .fold[open] > summary::after { content: ' ▴'; }
 .fold > summary { display: flex; align-items: center; gap: 6px; font-size: 15px; color: var(--ink); }
 .negotiation-title { margin: 0; font-size: 13px; font-weight: 700; color: var(--green); }
+
+/* Minimal chat layout for the Sell tab: greeting in the middle, one input bar pinned above the tabs */
+.chat-start { min-height: calc(100vh - 230px); display: flex; flex-direction: column; justify-content: center; padding-bottom: 150px; }
+.greet { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 0 12px; animation: fadeUp .35s ease both; }
+.greet svg { margin-bottom: 8px; }
+.greet-kicker { margin: 0; font-weight: 700; font-size: 13px; color: var(--green-2); letter-spacing: .3px; }
+.greet .display { font-size: 27px; margin: 0; }
+.greet .muted { margin: 4px 0 0; max-width: 300px; font-size: 14.5px; line-height: 1.5; }
+.dock { position: fixed; left: 0; right: 0; bottom: calc(66px + env(safe-area-inset-bottom)); z-index: 4; max-width: 520px; margin: 0 auto; padding: 8px 12px 10px; background: linear-gradient(180deg, rgba(246, 242, 232, 0), var(--bg) 22%); }
+.suggestions { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; }
+.suggestions::-webkit-scrollbar { display: none; }
+.chip { flex: none; display: flex; align-items: center; gap: 6px; max-width: 250px; padding: 9px 12px; border: 1px solid var(--gold-line); border-radius: 14px; background: var(--gold-bg); color: var(--gold-ink); font: 500 13px/1.35 Manrope, system-ui, sans-serif; text-align: left; white-space: normal; cursor: pointer; }
+.chip svg { flex: none; }
+.chip.plain { background: var(--surface); border-color: var(--line); color: var(--green); font-weight: 700; }
+.chat-bar { display: flex; align-items: flex-end; gap: 6px; padding: 6px 6px 6px 16px; border: 1.5px solid #e2dccb; border-radius: 26px; background: var(--surface); box-shadow: var(--shadow); transition: border-color .15s, box-shadow .15s; }
+.chat-bar:focus-within { border-color: var(--green-2); box-shadow: 0 0 0 4px rgba(46, 125, 79, .12), var(--shadow); }
+.chat-bar.recording { border-color: var(--red); }
+.chat-bar textarea { flex: 1; margin: 0; padding: 10px 0; min-height: 44px; max-height: 120px; border: 0; background: none; box-shadow: none; font-size: 16px; }
+.chat-bar textarea:focus { box-shadow: none; }
+.icon-btn { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; cursor: pointer; transition: transform .1s, background .2s; }
+.icon-btn:active { transform: scale(.92); }
+.icon-btn.mic { background: none; color: var(--green); }
+.icon-btn.mic.on { background: var(--red); color: #fff; animation: pulse 1.2s ease-in-out infinite; }
+.icon-btn.send { background: var(--green); color: #fff; }
+.icon-btn.send:disabled { background: #d9d3c2; cursor: default; }
+.dock-status { margin: 0 0 6px 14px; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.dock-error { margin: 0 4px 8px; }
