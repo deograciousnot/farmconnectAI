@@ -62,6 +62,17 @@ npm run build
 
 Before a demo, delete `data/runtime/` to clear test posts and requests.
 
+## Deploy to Render
+
+One Docker service runs everything (built app, Node API, Python AI service) on one https URL, so the microphone works on phones.
+
+1. On [render.com](https://render.com): **New → Blueprint**, connect this GitHub repo. Render reads `render.yaml`.
+2. When asked, paste your Gemini key into `GEMINI_API_KEY`. It's stored as a secret in Render, never in the repo.
+3. Wait for the first build (about 5–8 minutes). Your link is `https://farmconnect-ai.onrender.com` (or similar).
+4. Check `https://<your-link>/health` shows `"configured": true`.
+
+Free-tier notes: the service sleeps after 15 minutes without visitors, and the next visit takes 30–60 s to wake. Keep it awake with a free monitor (e.g. UptimeRobot) pinging `/health` every 5 minutes. The disk resets on restart, so posted buyer listings and requests are temporary. Demo buyers and KAMIS prices are built in.
+
 ## API
 
 | Method | Path | Purpose |

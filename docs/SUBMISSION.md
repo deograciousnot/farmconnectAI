@@ -10,7 +10,7 @@ Copy these answers into the submission form. Fill in the [bracketed] parts.
 
 ## Links
 
-- **Working prototype:** [https://….trycloudflare.com link, live until 21:15 EAT]
+- **Working prototype:** [https://….onrender.com link] (first open may take up to a minute if it was asleep)
 - **Source code:** https://github.com/deograciousnot/farmconnectAI
 - **Presentation:** [slides link, shared as "anyone with the link can view"]
 - **Demo video (90 s):** [link, viewable without sign-in]

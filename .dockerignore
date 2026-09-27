@@ -1,0 +1,14 @@
+.git
+.env
+.env.*
+!.env.example
+**/node_modules
+**/dist
+ai-service/.venv
+**/__pycache__
+**/.pytest_cache
+data/runtime
+.tmp
+docs/*.docx
+docs/~$*
+*.tsbuildinfo

@@ -96,4 +96,11 @@ app.post('/api/requests/:id/respond', (req, res) => {
   return 'error' in result ? res.status(400).json(result) : res.json(result);
 });
 
+// In production (e.g. Render) this server also serves the built app, so everything is one https origin.
+const CLIENT_DIST = fileURLToPath(new URL('../../client/dist/', import.meta.url));
+if (existsSync(`${CLIENT_DIST}index.html`)) {
+  app.use(express.static(CLIENT_DIST, { index: false, maxAge: '1h' }));
+  app.get(/^(?!\/api\/|\/health).*/, (_req, res) => res.sendFile(`${CLIENT_DIST}index.html`));
+}
+
 app.listen(port, () => console.log(`Farmconnect API listening on http://localhost:${port}`));

@@ -15,9 +15,10 @@ Times are **Nairobi (EAT)**, two hours ahead of the Tunis times on the event sit
 
 **Person A (laptop, backend):**
 - [ ] `git pull` on `main`, `npm install`, Python venv set up, Gemini key in `.env`
-- [ ] Delete `data/runtime/` (test posts, including the "ignore other buyers" listing, and test requests)
-- [ ] `npm run dev`, then `cloudflared tunnel --url http://localhost:5173`. Copy the https link. **Don't stop either until 21:15.** Stop the laptop sleeping and keep it charging.
-- [ ] Open http://localhost:4000/health: `"configured": true`
+- [ ] Local only: delete `data/runtime/` (test posts, including the "ignore other buyers" listing). Render starts clean.
+- [ ] **Deploy to Render** (README → "Deploy to Render"): New → Blueprint → this repo → paste the Gemini key. Check `https://<link>/health` shows `"configured": true`.
+- [ ] Add a free UptimeRobot monitor on `https://<link>/health` every 5 minutes, so it doesn't sleep during judging (19:45–21:15 EAT).
+- [ ] Backup link if Render has problems: `npm run dev` and `cloudflared tunnel --url http://localhost:5173` on the laptop.
 - [ ] Rehearse the fallback once: stop the AI service, find buyers, check that "offline summary" and "Price-only split" show, then start it again
 - [ ] Paste the link, repo URL and disclosure into the form ([SUBMISSION.md](SUBMISSION.md))
 
@@ -41,4 +42,5 @@ Backup scenario (single phone): watermelon, Uasin Gishu, 3,000 kg. The AI trades
 
 - **Gemini down or slow:** the app still works (manual form, price-only split, rule-based advice). Say so. That's the reliability story.
 - **Mic blocked:** you're on http. Use the https tunnel link, or type.
-- **Tunnel link changed:** a free trycloudflare link changes on restart. Update it in the submission if you had to restart.
+- **Render slow on first open:** it was asleep; wait up to a minute. The UptimeRobot ping prevents this.
+- **Tunnel link changed (backup only):** a free trycloudflare link changes on restart. Update it in the submission if you had to restart.

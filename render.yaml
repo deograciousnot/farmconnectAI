@@ -1,0 +1,16 @@
+# Render Blueprint: New > Blueprint > pick this repo. Set GEMINI_API_KEY when prompted.
+services:
+  - type: web
+    name: farmconnect-ai
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.1-flash-lite
+      - key: AI_SERVICE_URL
+        value: http://127.0.0.1:8000
