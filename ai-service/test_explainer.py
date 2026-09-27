@@ -88,4 +88,4 @@ def test_endpoint_returns_503_without_api_key(monkeypatch):
 def test_reply_language_follows_the_farmer():
     assert "simple English" in explainer.system_prompt("en")
     assert "simple Kiswahili" in explainer.system_prompt("sw")
-    assert "mix of" in explainer.system_prompt("mixed")
+    assert "code-switching" in explainer.system_prompt("mixed")
