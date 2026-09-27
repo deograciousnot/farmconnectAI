@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { findCounty } from './geo.js';
 
@@ -7,7 +7,7 @@ const DATA_DIR = fileURLToPath(new URL('../../data/', import.meta.url));
 const RUNTIME_FILE = `${DATA_DIR}runtime/listings.json`;
 
 export type MarketPrice = { market: string; county: string; wholesalePerKg: number; observations: number; latestDate: string; outlier: boolean };
-export type CropPrices = { id: string; label: string; kamisProductId: number; nationalMedianPerKg: number | null; markets: MarketPrice[] };
+export type CropPrices = { id: string; label: string; category: 'grain' | 'produce'; kamisProductId: number; nationalMedianPerKg: number | null; markets: MarketPrice[] };
 export type PriceData = { source: string; sourceUrl: string; retrievedAt: string; method: string; crops: CropPrices[] };
 
 export const BUSINESS_TYPES = ['reseller', 'wholesaler', 'retailer', 'processor', 'institution', 'exporter'] as const;
@@ -30,6 +30,10 @@ export type Listing = {
   showContact: boolean;
   isDemo: boolean;
   createdAt: string;
+  /** Secret the buyer's device keeps to manage the listing and answer farmers. Never sent to other users. */
+  manageToken?: string;
+  /** Kg the buyer says they already bought elsewhere, per demand period (see periodKey). */
+  filled?: Record<string, number>;
 };
 
 const readJson = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8'));
@@ -39,12 +43,28 @@ const seedListings = readJson<Listing[]>(`${DATA_DIR}buyers.seed.json`);
 // Tests (node --test sets NODE_TEST_CONTEXT) run against seed data only, never against listings posted while demoing.
 const postedListings: Listing[] = !process.env.NODE_TEST_CONTEXT && existsSync(RUNTIME_FILE) ? readJson<Listing[]>(RUNTIME_FILE) : [];
 
-export const crops = prices.crops.map(({ id, label }) => ({ id, label }));
+export const crops = prices.crops.map(({ id, label, category }) => ({ id, label, category })).sort((a, b) => a.label.localeCompare(b.label));
 export const cropPrices = (cropId: string) => prices.crops.find(c => c.id === cropId);
+
+export const findListing = (id: string) => [...postedListings, ...seedListings].find(l => l.id === id);
+
+/** Persists posted listings (seed listings are read-only). */
+export function saveListings() {
+  if (process.env.NODE_TEST_CONTEXT) return;
+  mkdirSync(`${DATA_DIR}runtime`, { recursive: true });
+  writeFileSync(RUNTIME_FILE, JSON.stringify(postedListings, null, 1));
+}
+
+/**
+ * Whether a buyer of `wanted` would take `offered`. A buyer of mixed beans takes any bean variety; otherwise the
+ * crop must match exactly. (People often just say "maharagwe", so the two sides can land on different varieties.)
+ */
+export const cropFits = (wanted: string, offered: string) =>
+  wanted === offered || (wanted === 'beans-mixed' && offered.startsWith('beans-'));
 
 export function listListings(crop?: string) {
   const all = [...postedListings, ...seedListings];
-  return crop ? all.filter(l => l.crop === crop) : all;
+  return crop ? all.filter(l => cropFits(l.crop, crop)) : all;
 }
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -96,14 +116,14 @@ export function addListing(body: Record<string, unknown>): { listing: Listing } 
   if (draft.contactPhone && !/^\+?[\d\s]{9,15}$/.test(draft.contactPhone)) errors.push('Phone number looks invalid.');
   if (errors.length) return { errors };
 
-  const listing: Listing = { ...draft, county: findCounty(draft.county)!.name, town: draft.town || findCounty(draft.county)!.town, id: randomUUID(), isDemo: false, createdAt: new Date().toISOString() };
+  const listing: Listing = {
+    ...draft, county: findCounty(draft.county)!.name, town: draft.town || findCounty(draft.county)!.town,
+    id: randomUUID(), isDemo: false, createdAt: new Date().toISOString(), manageToken: randomBytes(18).toString('base64url'), filled: {}
+  };
   postedListings.unshift(listing);
-  if (!process.env.NODE_TEST_CONTEXT) {
-    mkdirSync(`${DATA_DIR}runtime`, { recursive: true });
-    writeFileSync(RUNTIME_FILE, JSON.stringify(postedListings, null, 1));
-  }
+  saveListings();
   return { listing };
 }
 
 /** Strips contact details the buyer did not consent to share. */
-export const publicListing = ({ contactPhone, ...rest }: Listing) => (rest.showContact ? { ...rest, contactPhone } : rest);
+export const publicListing = ({ contactPhone, manageToken, filled, ...rest }: Listing) => (rest.showContact ? { ...rest, contactPhone } : rest);

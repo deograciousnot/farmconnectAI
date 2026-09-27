@@ -12,15 +12,27 @@ from typing import Literal
 
 from google import genai
 from google.genai import errors, types
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 Language = Literal["en", "sw"]
+
+
+class Allocation(BaseModel):
+    ref: str = Field(description="Buyer ref from EVIDENCE, e.g. B1.")
+    kg: int = Field(description="Whole kg for this buyer. At most that buyer's canTakeKg.")
+
+
+class BuyerNote(BaseModel):
+    ref: str
+    why: str = Field(description="One short sentence: why this buyer is or isn't a good fit for this farmer.")
 
 
 class Explanation(BaseModel):
     headline: str
     points: list[str]
     nextSteps: list[str]
+    split: list[Allocation] = Field(default_factory=list)
+    buyerNotes: list[BuyerNote] = Field(default_factory=list)
 
 
 class ExplainError(Exception):
@@ -36,7 +48,14 @@ def system_prompt(language: Language) -> str:
 You receive EVIDENCE as JSON computed by our system. Rules:
 - Use only buyers, markets and numbers that appear in EVIDENCE. Never invent or recalculate prices, distances or totals.
 - Compare options by net KES per kg (price minus transport and handling), how much each buyer can take, and distance.
-- If one buyer cannot take the whole harvest, explain the suggested split.
+- Choose a split: which buyers get how many kg ("split", using buyer refs). Rules the app enforces:
+  whole kg, each buyer at most its canTakeKg, the total at most harvestKg. Place the whole harvest if buyers can take it.
+  EVIDENCE.rulesSplit is a simple baseline that only maximises net KES per kg. Improve on it with judgement where it helps:
+  perishable crops favour fewer, nearer buyers and buyers who collect from the farm; weekly buyers mean repeat sales;
+  avoid tiny allocations to a far buyer; a buyer whose alreadyCoveredKg is high has little room left.
+  If you differ from rulesSplit, say why in one point. Don't state KES totals for your split; the app calculates them.
+- In "buyerNotes", give one short reason for each buyer in your split and for any strong buyer you left out.
+- Refs like B1 are only for the split and buyerNotes.ref fields. In all text the farmer reads, use buyer names.
 - Point out trade-offs, e.g. a higher price far away versus a nearby buyer or one that collects from the farm.
 - Be honest about uncertainty: prices are estimates and buyers must be confirmed.
 - Never tell the farmer what they must do; offer options.
@@ -112,8 +131,12 @@ async def explain(evidence: dict, language: Language, client: genai.Client | Non
     except ValidationError as err:
         raise ExplainError("Model response did not match the expected format") from err
 
-    explanation = Explanation(headline=explanation.headline, points=explanation.points[:4], nextSteps=explanation.nextSteps[:3])
-    invented = find_invented_numbers(" ".join([explanation.headline, *explanation.points, *explanation.nextSteps]), evidence)
+    explanation = explanation.model_copy(update={"points": explanation.points[:4], "nextSteps": explanation.nextSteps[:3], "buyerNotes": explanation.buyerNotes[:6]})
+    # The model may mention the kg it chose for the split (and their total), besides figures in the evidence.
+    split_kg = [a.kg for a in explanation.split]
+    allowed = {"evidence": evidence, "split": split_kg, "splitTotal": sum(split_kg)}
+    text = " ".join([explanation.headline, *explanation.points, *explanation.nextSteps, *(n.why for n in explanation.buyerNotes)])
+    invented = find_invented_numbers(text, allowed)
     if invented:
         raise ExplainError(f"Model mentioned figures not in the evidence ({', '.join(f'{n:g}' for n in invented[:3])})")
 

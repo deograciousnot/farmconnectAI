@@ -57,7 +57,7 @@
   "id": "demo-wm-lakeside",
   "businessName": "Lakeside Hotels Procurement",
   "businessType": "institution",
-  "description": "Buys fresh fruit for a small group of hotels in Kisumu. Needs consistent quality.",
+  "description": "Buys fresh fruit for a small group of hotels in Kisumu. Needs consistent quality. Already has 300 kg lined up each week.",
   "crop": "watermelon",
   "pricePerKg": 52,
   "quantityKg": 800,
@@ -69,7 +69,10 @@
   "collectsFromFarm": false,
   "showContact": false,
   "isDemo": true,
-  "createdAt": "2026-09-26T00:00:00.000Z"
+  "createdAt": "2026-09-26T00:00:00.000Z",
+  "filled": {
+   "*": 300
+  }
  },
  {
   "id": "demo-wm-kangemi",

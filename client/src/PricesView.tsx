@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { api, type CropPrices, type Meta } from './api';
 
 export function PricesView({ meta }: { meta: Meta }) {
-  const [crop, setCrop] = useState(meta.crops[0]?.id ?? '');
+  const [crop, setCrop] = useState(meta.crops.find(c => c.id === 'maize')?.id ?? meta.crops[0]?.id ?? '');
   const [data, setData] = useState<CropPrices | null>(null);
   const [error, setError] = useState('');
 
@@ -13,7 +13,7 @@ export function PricesView({ meta }: { meta: Meta }) {
 
   return <>
     <section className="card form">
-      <h2>Market prices</h2>
+      <h2 className="display">Market prices</h2>
       <p className="muted">Wholesale prices reported by county market officers to KAMIS (Ministry of Agriculture).</p>
       <label>Crop<select value={crop} onChange={e => setCrop(e.target.value)}>{meta.crops.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}</select></label>
     </section>

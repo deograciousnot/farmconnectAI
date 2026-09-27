@@ -4,8 +4,10 @@ import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { aiStatus, buildEvidence, explain } from './ai.js';
 import { BUSINESS_TYPES, addListing, cropPrices, crops, listListings, prices, publicListing } from './data.js';
+import { createRequest, manageView, requestStatuses, respond, setFilled } from './demand.js';
 import { COUNTIES } from './geo.js';
 import { ASSUMPTIONS, analyze, validateInput } from './matching.js';
+import { understandHarvest, understandListing } from './understand.js';
 
 const ENV_FILE = fileURLToPath(new URL('../../.env', import.meta.url));
 if (existsSync(ENV_FILE)) process.loadEnvFile(ENV_FILE);
@@ -14,6 +16,8 @@ const app = express();
 const port = Number(process.env.PORT ?? 4000);
 
 app.use(cors());
+// Voice notes are sent as base64; only that route accepts large bodies.
+app.use(['/api/understand/harvest', '/api/understand/listing'], express.json({ limit: '4mb' }));
 app.use(express.json({ limit: '20kb' }));
 
 app.get('/health', async (_req, res) => res.json({ ok: true, service: 'farmconnect-ai-api', ai: await aiStatus() }));
@@ -37,7 +41,8 @@ app.get('/api/listings', (req, res) => res.json({ listings: listListings(typeof 
 app.post('/api/listings', (req, res) => {
   const result = addListing(req.body ?? {});
   if ('errors' in result) return res.status(400).json({ error: result.errors.join(' '), errors: result.errors });
-  return res.status(201).json({ listing: publicListing(result.listing) });
+  // The manage token is returned once, to the buyer's device only.
+  return res.status(201).json({ listing: publicListing(result.listing), manageToken: result.listing.manageToken });
 });
 
 // Deterministic results return immediately; the client then asks /api/explain for the AI advice,
@@ -54,6 +59,41 @@ app.post('/api/explain', async (req, res) => {
   if ('error' in validated) return res.status(400).json({ error: validated.error });
   const analysis = analyze(validated.input);
   return res.json({ ...(await explain(analysis)), evidenceSent: buildEvidence(analysis) });
+});
+
+// AI reads free speech or text and proposes form values. The person always confirms before anything happens.
+app.post('/api/understand/harvest', async (req, res) => {
+  try { return res.json(await understandHarvest(req.body ?? {})); } catch (err) { return res.status(422).json({ error: err instanceof Error ? err.message : 'Could not understand.' }); }
+});
+
+app.post('/api/understand/listing', async (req, res) => {
+  try { return res.json(await understandListing(req.body ?? {})); } catch (err) { return res.status(422).json({ error: err instanceof Error ? err.message : 'Could not understand.' }); }
+});
+
+// Farmers ask buyers to confirm; buyers answer from their own device (manage token).
+app.post('/api/requests', (req, res) => {
+  const result = createRequest(req.body ?? {});
+  return 'error' in result ? res.status(400).json(result) : res.status(201).json(result);
+});
+
+app.get('/api/requests', (req, res) => {
+  const ids = typeof req.query.ids === 'string' ? req.query.ids.split(',').slice(0, 20) : [];
+  return res.json({ requests: requestStatuses(ids) });
+});
+
+app.get('/api/listings/:id/manage', (req, res) => {
+  const view = manageView(req.params.id, req.get('x-manage-token'));
+  return view ? res.json(view) : res.status(403).json({ error: 'Not allowed.' });
+});
+
+app.post('/api/listings/:id/filled', (req, res) => {
+  const result = setFilled(req.params.id, req.get('x-manage-token'), req.body?.kg);
+  return 'error' in result ? res.status(400).json(result) : res.json(result);
+});
+
+app.post('/api/requests/:id/respond', (req, res) => {
+  const result = respond(req.params.id, req.get('x-manage-token'), req.body?.accept === true);
+  return 'error' in result ? res.status(400).json(result) : res.json(result);
 });
 
 app.listen(port, () => console.log(`Farmconnect API listening on http://localhost:${port}`));

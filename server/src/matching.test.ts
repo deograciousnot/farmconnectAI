@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { buildEvidence, explain, fallbackExplanation } from './ai.js';
-import { addListing, promptSafe } from './data.js';
+import { buildEvidence, compareFor, explain, fallbackExplanation, planFromSplit } from './ai.js';
+import { addListing, cropFits, findListing, promptSafe } from './data.js';
+import { createRequest, demandFor, periodKey } from './demand.js';
 import { analyze, validateInput, type AnalysisInput } from './matching.js';
+import { mapHarvest, mapListing, pricePerKg, toKg } from './understand.js';
 
 const demo: AnalysisInput = { crop: 'watermelon', county: 'Uasin Gishu', harvestKg: 3000, harvestDate: '2026-10-11', language: 'en' };
 
@@ -50,7 +52,7 @@ test('split plan is compared with selling everything at the nearest public marke
   assert.equal(a.comparison.planNet, a.plan.estimatedNet);
   assert.equal(a.comparison.differenceKes, a.comparison.planNet - a.comparison.baselineNet);
   assert.ok(a.comparison.differenceKes > 0);
-  assert.equal(buildEvidence(a).comparedWithNearestMarket?.differenceKes, a.comparison.differenceKes);
+  assert.equal(buildEvidence(a).comparedWithNearestMarket?.sellEverythingThereNet, a.comparison.baselineNet);
 });
 
 test('instruction-like buyer text never reaches the model', () => {
@@ -78,4 +80,76 @@ test('explanation falls back when the AI service is unreachable', async () => {
   assert.equal(result.provider, 'fallback');
   assert.ok(result.fallbackReason);
   assert.match(result.explanation.headline, /Lakeside Hotels Procurement/);
+});
+
+test('units are converted by code, with unknown sizes left for the person', () => {
+  assert.deepEqual(toKg({ amount: 30, unit: 'bag' }, 'maize'), { kg: 2700, note: '30 bags × 90 kg ≈ 2,700 kg' });
+  assert.equal(toKg({ amount: 2, unit: 'tonne' }, 'watermelon')?.kg, 2000);
+  assert.equal(toKg({ amount: 10, unit: 'bag' }, 'watermelon')?.kg, null);
+  assert.equal(pricePerKg({ amount: 4500, per: 'bag' }, 'maize')?.value, 50);
+  assert.equal(toKg({ amount: 10, unit: 'bag' }, 'green-grams')?.kg, 900, 'grains and pulses use 90 kg bags');
+  assert.equal(toKg({ amount: 10, unit: 'bag' }, 'cassava')?.kg, null, 'no guessing for produce bags');
+});
+
+test('crops we do not cover are reported, not silently dropped', () => {
+  const r = mapHarvest({ transcript: null, crop: null, cropMentioned: 'kahawa', place: null, county: null, quantity: null, harvestDate: null, unclear: [] });
+  assert.match(r.unclear[0], /kahawa.*isn't in our crop list/);
+  const ok = mapHarvest({ transcript: null, crop: 'cassava', cropMentioned: 'mihogo', place: null, county: null, quantity: null, harvestDate: null, unclear: [] });
+  assert.equal(ok.fields.crop, 'cassava');
+  assert.ok(ok.notes.includes('mihogo → Cassava, fresh (mihogo)') || ok.notes.some(n => n.includes('Cassava')));
+});
+
+test('AI readings are mapped to known crops and counties only', () => {
+  const r = mapHarvest({ transcript: null, crop: 'maize', place: 'Kitale', county: 'Trans Nzoia', quantity: { amount: 30, unit: 'bag' }, harvestDate: '2026-10-04', unclear: [] });
+  assert.deepEqual(r.fields, { crop: 'maize', county: 'Trans Nzoia', harvestKg: 2700, harvestDate: '2026-10-04' });
+  assert.ok(r.notes.includes('Kitale → Trans Nzoia county'));
+  const bad = mapHarvest({ transcript: null, crop: 'gold', place: null, county: 'Atlantis', quantity: null, harvestDate: null, unclear: [] });
+  assert.deepEqual(bad.fields, { crop: null, county: null, harvestKg: null, harvestDate: null });
+  const listing = mapListing({ businessName: 'Kibuye {Fresh} Traders', businessType: 'hacker', crop: 'tomato', price: { amount: 80, per: 'kg' }, quantity: { amount: 500, unit: 'kg' },
+    frequency: 'weekly', place: 'Kibuye', county: 'Kisumu', collectsFromFarm: true, neededFrom: null, neededUntil: null, description: null, unclear: [] });
+  assert.equal(listing.fields.businessName, 'Kibuye Fresh Traders');
+  assert.equal(listing.fields.businessType, null);
+  assert.equal(listing.fields.pricePerKg, 80);
+});
+
+test('an AI split is accepted only within the rules, and its money is calculated by code', () => {
+  const a = analyze(demo);
+  const [b1, b2] = a.matches;
+  const ok = planFromSplit(a, [{ ref: 'B1', kg: b1.demandKg }, { ref: 'B2', kg: 100 }]);
+  assert.ok('plan' in ok);
+  assert.equal(ok.plan.source, 'ai');
+  assert.equal(ok.plan.estimatedNet, Math.round(b1.demandKg * b1.netPerKg) + Math.round(100 * b2.netPerKg));
+  assert.equal(ok.plan.unallocatedKg, 3000 - b1.demandKg - 100);
+  assert.equal(compareFor(a, ok.plan)?.planNet, ok.plan.estimatedNet + Math.round(ok.plan.unallocatedKg * a.comparison!.netPerKg));
+  assert.match((planFromSplit(a, [{ ref: 'B1', kg: b1.demandKg + 1 }]) as { error: string }).error, /can only take/);
+  assert.match((planFromSplit(a, [{ ref: 'B9', kg: 100 }]) as { error: string }).error, /unknown buyer/);
+  assert.match((planFromSplit(a, [{ ref: 'B1', kg: 100 }, { ref: 'B1', kg: 100 }]) as { error: string }).error, /twice/);
+  assert.match((planFromSplit(a, [{ ref: 'B1', kg: 10.5 }]) as { error: string }).error, /invalid kg/);
+});
+
+test('buyers only offer what is still open: weekly demand minus what they already have', () => {
+  const lakeside = analyze(demo).matches.find(m => m.businessName === 'Lakeside Hotels Procurement')!;
+  assert.equal(lakeside.totalDemandKg, 800);
+  assert.equal(lakeside.alreadyCoveredKg, 300);
+  assert.equal(lakeside.demandKg, 500);
+  assert.equal(periodKey({ frequency: 'weekly' }, '2026-10-11'), '2026-W41');
+  assert.equal(periodKey({ frequency: 'once' }, '2026-10-11'), 'once');
+});
+
+test('farmers cannot request more than a buyer has open', () => {
+  const listing = findListing('demo-wm-lakeside')!;
+  const tooMuch = createRequest({ listingId: listing.id, kg: 600, harvestDate: '2026-10-11', county: 'Uasin Gishu' });
+  assert.ok('error' in tooMuch && /at most 500 kg/.test(tooMuch.error));
+  const ok = createRequest({ listingId: listing.id, kg: 400, harvestDate: '2026-10-11', county: 'Uasin Gishu' });
+  assert.ok('request' in ok && ok.request.status === 'pending');
+  assert.equal(demandFor(listing, '2026-10-11').pendingKg, 400);
+  assert.equal(demandFor(listing, '2026-10-11').remainingKg, 500, 'pending requests do not reduce demand until accepted');
+});
+
+test('a mixed-beans buyer takes any bean variety, but not other crops', () => {
+  assert.ok(cropFits('beans-mixed', 'beans-rosecoco'));
+  assert.ok(!cropFits('beans-rosecoco', 'beans-mixed'));
+  assert.ok(!cropFits('beans-mixed', 'maize'));
+  const r = createRequest({ listingId: 'demo-wm-lakeside', crop: 'maize', kg: 100, harvestDate: '2026-10-11', county: 'Uasin Gishu' });
+  assert.ok('error' in r && /isn't buying/.test(r.error));
 });

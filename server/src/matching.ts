@@ -1,4 +1,5 @@
 import { cropPrices, listListings, type Listing } from './data.js';
+import { demandFor } from './demand.js';
 import { findCounty, roadKm } from './geo.js';
 
 // Documented, deliberately simple logistics assumptions. Shown to the farmer with every result.
@@ -16,7 +17,7 @@ export type AnalysisInput = { crop: string; county: string; harvestKg: number; h
 export type BuyerMatch = {
   listingId: string; businessName: string; businessType: Listing['businessType']; description: string; town: string; county: string;
   pricePerKg: number; distanceKm: number; transportPerKg: number; netPerKg: number;
-  demandKg: number; frequency: Listing['frequency']; sellableKg: number; coveragePct: number; estimatedNet: number;
+  demandKg: number; totalDemandKg: number; alreadyCoveredKg: number; frequency: Listing['frequency']; sellableKg: number; coveragePct: number; estimatedNet: number;
   collectsFromFarm: boolean; priceVsWholesalePct: number | null; wholesaleReference: string | null; isDemo: boolean; contactPhone?: string;
 };
 
@@ -58,15 +59,16 @@ export function analyze(input: AnalysisInput) {
     .filter(l => l.neededFrom <= latestStart && l.neededUntil >= input.harvestDate)
     .flatMap(l => {
       const location = findCounty(l.county);
-      if (!location) return [];
+      const demand = demandFor(l, input.harvestDate);
+      if (!location || demand.remainingKg < 10) return [];
       const { distanceKm, transportPerKg } = logistics(farm, location, l.collectsFromFarm);
       const netPerKg = round1(l.pricePerKg - transportPerKg - ASSUMPTIONS.handlingKesPerKg);
-      const sellableKg = Math.min(input.harvestKg, l.quantityKg);
+      const sellableKg = Math.min(input.harvestKg, demand.remainingKg);
       const wholesale = wholesaleFor(l.crop, l.county);
       return [{
         listingId: l.id, businessName: l.businessName, businessType: l.businessType, description: l.description, town: l.town, county: l.county,
         pricePerKg: l.pricePerKg, distanceKm, transportPerKg, netPerKg,
-        demandKg: l.quantityKg, frequency: l.frequency, sellableKg, coveragePct: Math.round((sellableKg / input.harvestKg) * 100),
+        demandKg: demand.remainingKg, totalDemandKg: demand.totalKg, alreadyCoveredKg: demand.filledKg + demand.acceptedKg, frequency: l.frequency, sellableKg, coveragePct: Math.round((sellableKg / input.harvestKg) * 100),
         estimatedNet: Math.round(sellableKg * netPerKg), collectsFromFarm: l.collectsFromFarm,
         priceVsWholesalePct: wholesale ? Math.round(((l.pricePerKg - wholesale.perKg) / wholesale.perKg) * 100) : null,
         wholesaleReference: wholesale?.label ?? null, isDemo: l.isDemo, ...(l.showContact && l.contactPhone ? { contactPhone: l.contactPhone } : {})
