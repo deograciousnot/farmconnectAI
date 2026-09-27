@@ -1,5 +1,5 @@
 import { cropPrices, promptSafe } from './data.js';
-import type { Analysis } from './matching.js';
+import type { Analysis, ReplyLanguage } from './matching.js';
 
 // The AI step lives in the Python service (ai-service/, Gemini). This module builds the evidence it receives,
 // checks the split the model proposes against hard rules, calculates the money for it, and falls back to the
@@ -74,8 +74,9 @@ export function planFromSplit(a: Analysis, split: { ref: string; kg: number }[])
 }
 
 /** Rule-based reasons shown when the model is unavailable. */
-function fallbackNotes(a: Analysis, language: 'en' | 'sw'): BuyerNote[] {
-  const sw = language === 'sw';
+// Templates can't mix languages naturally, so mixed speakers get the Kiswahili fallback.
+function fallbackNotes(a: Analysis, language: ReplyLanguage): BuyerNote[] {
+  const sw = language !== 'en';
   return a.plan.allocations.map((p, i) => {
     const m = a.matches.find(x => x.listingId === p.listingId)!;
     const parts = [
@@ -87,8 +88,8 @@ function fallbackNotes(a: Analysis, language: 'en' | 'sw'): BuyerNote[] {
   });
 }
 
-export function fallbackExplanation(a: Analysis, language: 'en' | 'sw'): Explanation {
-  const sw = language === 'sw';
+export function fallbackExplanation(a: Analysis, language: ReplyLanguage): Explanation {
+  const sw = language !== 'en';
   const [best, second] = a.matches;
   const ref = a.marketReferences[0];
   if (!best) {

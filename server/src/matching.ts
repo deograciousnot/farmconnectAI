@@ -12,7 +12,9 @@ export const ASSUMPTIONS = {
   unit: 'kg'
 };
 
-export type AnalysisInput = { crop: string; county: string; harvestKg: number; harvestDate: string; language: 'en' | 'sw' };
+/** Language for the AI's reply: whatever the farmer used ('mixed' = Kiswahili and English together). */
+export type ReplyLanguage = 'en' | 'sw' | 'mixed';
+export type AnalysisInput = { crop: string; county: string; harvestKg: number; harvestDate: string; language: ReplyLanguage };
 
 export type BuyerMatch = {
   listingId: string; businessName: string; businessType: Listing['businessType']; description: string; town: string; county: string;
@@ -33,7 +35,7 @@ export function validateInput(body: Record<string, unknown>): { input: AnalysisI
   if (!findCounty(county)) return { error: 'Choose the county where your farm is.' };
   if (!(harvestKg >= 10 && harvestKg <= 1_000_000)) return { error: 'Harvest must be between 10 and 1,000,000 kg.' };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(harvestDate) || Number.isNaN(Date.parse(harvestDate))) return { error: 'Provide a valid harvest date.' };
-  return { input: { crop, county: findCounty(county)!.name, harvestKg, harvestDate, language: body.language === 'sw' ? 'sw' : 'en' } };
+  return { input: { crop, county: findCounty(county)!.name, harvestKg, harvestDate, language: body.language === 'sw' || body.language === 'mixed' ? body.language : 'en' } };
 }
 
 /** KAMIS median wholesale price in the buyer's county (ignoring flagged outliers), else the national median. */

@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Understood } from './api';
+import { useT } from './i18n';
 import { MicIcon, SendIcon, SparkIcon, StopIcon } from './icons';
 
 const MAX_SECONDS = 30;
 
 /** Records a voice note with the browser's MediaRecorder (WebM on Chrome/Android, MP4/M4A on iPhone). */
-function useRecorder(onDone: (audioBase64: string, mimeType: string) => void) {
+function useRecorder(onDone: (audioBase64: string, mimeType: string) => void, t: ReturnType<typeof useT>) {
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [error, setError] = useState('');
@@ -17,8 +18,8 @@ function useRecorder(onDone: (audioBase64: string, mimeType: string) => void) {
   const start = async () => {
     setError('');
     // Phones only allow the microphone on https (or localhost). Explain instead of hiding the button.
-    if (!window.isSecureContext) return setError('Voice needs a secure link (https). Open the app through the https link, or type instead.');
-    if (!('MediaRecorder' in window) || !navigator.mediaDevices?.getUserMedia) return setError('This browser can\'t record voice. Please type instead.');
+    if (!window.isSecureContext) return setError(t('Voice needs a secure link (https). Open the app through the https link, or type instead.', 'Sauti inahitaji kiungo salama (https). Fungua programu kupitia kiungo cha https, au andika.'));
+    if (!('MediaRecorder' in window) || !navigator.mediaDevices?.getUserMedia) return setError(t('This browser can\'t record voice. Please type instead.', 'Kivinjari hiki hakiwezi kurekodi sauti. Tafadhali andika.'));
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const rec = new MediaRecorder(stream);
@@ -36,7 +37,7 @@ function useRecorder(onDone: (audioBase64: string, mimeType: string) => void) {
       setRecording(true); setSeconds(0);
       timer.current = setInterval(() => setSeconds(s => { if (s + 1 >= MAX_SECONDS) stop(); return s + 1; }), 1000);
     } catch {
-      setError('Microphone blocked. Allow microphone access in your browser, or type instead.');
+      setError(t('Microphone blocked. Allow microphone access in your browser, or type instead.', 'Maikrofoni imezuiwa. Ruhusu maikrofoni kwenye kivinjari, au andika.'));
     }
   };
 
@@ -58,6 +59,7 @@ type Props<F> = {
 
 /** Voice-first input, like sending a WhatsApp voice note. The AI's reading goes to the parent to confirm. */
 export function SayIt<F>({ title, subtitle, placeholder, example, voice, understand, onUnderstood, onFailed }: Props<F>) {
+  const t = useT();
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -67,13 +69,13 @@ export function SayIt<F>({ title, subtitle, placeholder, example, voice, underst
     try {
       onUnderstood(await understand(input), input.text ?? null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not understand that.');
+      setError(err instanceof Error ? err.message : t('Could not understand that.', 'Sikuelewa hilo.'));
       onFailed?.();
     } finally {
       setBusy(false);
     }
   };
-  const mic = useRecorder((audioBase64, mimeType) => run({ audioBase64, mimeType }));
+  const mic = useRecorder((audioBase64, mimeType) => run({ audioBase64, mimeType }), t);
   const submitText = () => { if (text.trim() && !busy) run({ text }); };
 
   return <section className="card sayit">
@@ -82,21 +84,21 @@ export function SayIt<F>({ title, subtitle, placeholder, example, voice, underst
 
     {voice && <div className="voice">
       <button type="button" className={`mic-btn${mic.recording ? ' on' : ''}`} onClick={mic.recording ? mic.stop : mic.start} disabled={busy}
-        aria-label={mic.recording ? 'Stop recording' : 'Record a voice message'}>
+        aria-label={mic.recording ? t('Stop recording', 'Acha kurekodi') : t('Record a voice message', 'Rekodi ujumbe wa sauti')}>
         {mic.recording ? <StopIcon /> : <MicIcon />}
       </button>
-      <p className="voice-hint">{busy ? 'Understanding…' : mic.recording ? `Recording 0:${String(mic.seconds).padStart(2, '0')} · tap to finish` : 'Tap and speak in Kiswahili or English'}</p>
+      <p className="voice-hint">{busy ? t('Understanding…', 'Ninaelewa…') : mic.recording ? t(`Recording 0:${String(mic.seconds).padStart(2, '0')} · tap to finish`, `Inarekodi 0:${String(mic.seconds).padStart(2, '0')} · gusa kumaliza`) : t('Tap and speak in Kiswahili, English or both', 'Gusa na uongee kwa Kiswahili, Kiingereza au vyote')}</p>
     </div>}
-    {voice && <div className="or"><span>or type</span></div>}
+    {voice && <div className="or"><span>{t('or type', 'au andika')}</span></div>}
 
     <div className={`composer${busy ? ' busy' : ''}`}>
       <textarea rows={2} value={text} onChange={e => setText(e.target.value)} placeholder={placeholder} aria-label={title}
         onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitText(); } }} />
-      <button type="button" className="send" disabled={busy || mic.recording || !text.trim()} onClick={submitText} aria-label="Send">
+      <button type="button" className="send" disabled={busy || mic.recording || !text.trim()} onClick={submitText} aria-label={t('Send', 'Tuma')}>
         {busy ? <span className="spinner" /> : <SendIcon />}
       </button>
     </div>
-    {!text && !busy && <button type="button" className="example" onClick={() => setText(example)}><SparkIcon size={12} /> Try: “{example}”</button>}
+    {!text && !busy && <button type="button" className="example" onClick={() => setText(example)}><SparkIcon size={12} /> {t('Try', 'Jaribu')}: “{example}”</button>}
     {(error || mic.error) && <p className="error" role="alert">{error || mic.error}</p>}
   </section>;
 }

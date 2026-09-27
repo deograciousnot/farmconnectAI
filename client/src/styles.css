@@ -120,6 +120,7 @@ button.link:active { opacity: .6; }
 .pill { display: inline-block; margin-left: 6px; padding: 3px 8px; border-radius: 999px; background: var(--leaf); color: var(--green-2); font: 600 10.5px Manrope, system-ui, sans-serif; letter-spacing: 0; text-transform: none; vertical-align: middle; }
 .pill.demo { background: #eee9dc; color: #857d69; }
 .pill.warn { background: var(--red-bg); color: var(--red); }
+.reply-lang { margin: -4px 0 8px; font-size: 12px; font-weight: 600; color: var(--gold-ink); opacity: .8; }
 .ai-note { display: flex; gap: 6px; margin: 12px 0 0; padding: 9px 12px; border-radius: 12px; background: var(--gold-bg); border: 1px solid var(--gold-line); font-size: 13.5px; line-height: 1.45; color: #5d4417; }
 
 /* Plan */

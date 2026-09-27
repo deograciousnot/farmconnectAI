@@ -23,7 +23,7 @@ app = FastAPI(title="Farmconnect AI explanation service")
 
 class ExplainRequest(BaseModel):
     evidence: dict
-    language: Literal["en", "sw"] = "en"
+    language: Literal["en", "sw", "mixed"] = "en"
 
 
 @app.get("/health")

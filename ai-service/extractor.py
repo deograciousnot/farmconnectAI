@@ -30,7 +30,12 @@ class Price(BaseModel):
     per: Optional[Unit] = Field(description="What the price is for, e.g. kg or bag. null if not said.")
 
 
+SpokenLanguage = Literal["en", "sw", "mixed"]
+LANGUAGE_FIELD = "Language the person used: en (English), sw (Kiswahili), or mixed (both, or Sheng)."
+
+
 class HarvestExtraction(BaseModel):
+    language: Optional[SpokenLanguage] = Field(default=None, description=LANGUAGE_FIELD)
     transcript: Optional[str] = Field(description="For audio: what was said, word for word. For text: null.")
     cropMentioned: Optional[str] = Field(default=None, description="The crop exactly as the farmer named it, e.g. 'mahindi', even if not in the list.")
     crop: Optional[str] = Field(description="One crop id from the allowed list, or null if none fits.")
@@ -42,6 +47,7 @@ class HarvestExtraction(BaseModel):
 
 
 class ListingExtraction(BaseModel):
+    language: Optional[SpokenLanguage] = Field(default=None, description=LANGUAGE_FIELD)
     transcript: Optional[str] = Field(default=None, description="For audio: what was said, word for word. For text: null.")
     businessName: Optional[str]
     businessType: Optional[str] = Field(description="One of the allowed business types, or null.")

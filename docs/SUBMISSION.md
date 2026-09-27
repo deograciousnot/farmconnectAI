@@ -41,7 +41,8 @@ A voice-first mobile web app that connects both sides:
 - Net KES/kg after transport and handling for every buyer
 - AI-chosen split across buyers with a reason per buyer, compared with a price-only split
 - "+KES X more than selling everything at the nearest market"
-- Advice in English or Kiswahili, typed out after it has been checked
+- The AI answers in the language you use (English, Kiswahili, or a natural mix for Sheng speakers), with no setting to change; the app itself switches between English and Kiswahili
+- Advice typed out after it has been checked
 - Farmer-to-buyer confirmation requests with live status on both phones
 - Live buyer demand: weekly volume minus what's already bought or accepted
 - Works when the AI is down: manual form, price-only split and rule-based advice, all labelled
@@ -51,7 +52,7 @@ A voice-first mobile web app that connects both sides:
 We use Google Gemini (`gemini-3.1-flash-lite`) for three things a rule-based system can't do, and keep it away from anything that must be exact:
 1. **Understanding people:** voice notes and text in Kiswahili, English and Sheng, with local units, number words, relative dates, and towns mapped to counties. Farmers and buyers don't have to fill in forms.
 2. **Judgement:** choosing which buyers get how much, weighing perishability, buyers who collect from the farm, weekly relationships and remaining demand, not just the highest price. The app shows what the price-only split would have earned, so the trade-off is transparent.
-3. **Explanation:** plain-language advice and a one-line reason per buyer in the farmer's language.
+3. **Explanation:** plain-language advice and a one-line reason per buyer, in the language the farmer actually used: English, Kiswahili, or the same code-switched mix ("Tikiti maji inaharibika fast, so nimeepuka buyers wa mbali…"). Gemini detects the language while reading the farmer's words.
 
 Code does unit conversion, distance, transport, all money, and demand bookkeeping. Every AI output uses a fixed JSON schema and is checked before anyone sees it. We chose a fast, low-cost model because farmers wait on each step (typically 2–5 seconds) and the free tier makes the prototype cheap to run.
 

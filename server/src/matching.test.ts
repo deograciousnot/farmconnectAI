@@ -153,3 +153,16 @@ test('a mixed-beans buyer takes any bean variety, but not other crops', () => {
   const r = createRequest({ listingId: 'demo-wm-lakeside', crop: 'maize', kg: 100, harvestDate: '2026-10-11', county: 'Uasin Gishu' });
   assert.ok('error' in r && /isn't buying/.test(r.error));
 });
+
+test('the AI replies in the language the farmer used; notes follow the app language', () => {
+  const v = validateInput({ crop: 'maize', county: 'Nakuru', harvestKg: 100, harvestDate: '2026-10-01', language: 'mixed' });
+  assert.ok('input' in v && v.input.language === 'mixed');
+  assert.match(fallbackExplanation(analyze({ ...demo, language: 'mixed' }), 'mixed').headline, /inaonekana/, 'mixed speakers get the Kiswahili fallback');
+  const heard = { language: 'sw', transcript: null, crop: 'maize', place: 'Kitale', county: 'Trans Nzoia', quantity: { amount: 30, unit: 'bag' as const }, harvestDate: null, unclear: [] };
+  const sw = mapHarvest(heard, 'sw');
+  assert.equal(sw.language, 'sw');
+  assert.ok(sw.notes.includes('Kitale → kaunti ya Trans Nzoia'));
+  assert.ok(sw.notes.includes('magunia 30 × kg 90 ≈ kg 2,700'));
+  assert.ok(mapHarvest(heard, 'en').notes.includes('30 bags × 90 kg ≈ 2,700 kg'));
+  assert.equal(mapHarvest({ ...heard, language: 'klingon' }).language, null);
+});

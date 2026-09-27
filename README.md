@@ -4,7 +4,7 @@
 
 A farmer says, in Kiswahili or English, *"Nina magunia 28 ya maharagwe Webuye, nitauza wiki ijayo"* ("I have 28 bags of beans in Webuye, selling next week"). Farmconnect understands it, asks them to confirm, and finds buyers who still have open demand for that crop and week. It works out what each buyer really pays after transport and has the AI choose how to split the harvest across buyers and explain why. With one tap, the farmer can then ask those buyers to confirm. Buyers post their demand the same way, by speaking or pasting their usual WhatsApp message, and answer farmers from their phone.
 
-It's a mobile web app (PWA): open the link on any phone and "Add to Home Screen". There's nothing to install from an app store.
+It's a mobile web app (PWA): open the link on any phone and "Add to Home Screen". There's nothing to install from an app store. The EN/SW switch sets the app's own language; the AI always answers in the language you speak.
 
 ## How the AI is used
 
@@ -15,7 +15,7 @@ The AI does the parts rules can't do. Code does everything that has to be exact.
 | **Understand the farmer** | Reads a voice note or text in Kiswahili, English or Sheng: number words ("thelathini" = 30), local units (gunia, debe, crate), relative dates ("wiki ijayo" = next week), and towns mapped to counties (Webuye → Bungoma) | Converts units to kg with a fixed table (90 kg bag, 64 kg tomato crate). The farmer confirms every field before anything happens |
 | **Understand the buyer** | Turns a spoken or pasted WhatsApp message into a buyer post: crop, price per unit, volume, how often, place, pickup | Converts price per bag to price per kg. The buyer checks the post before publishing |
 | **Choose the split** | Decides which buyers get how many kg, using judgement: perishable crops go to fewer, nearer buyers or buyers who collect; weekly buyers mean repeat sales; buyers with little demand left get little | Checks every allocation (each buyer's open demand, total within the harvest) and calculates all the money. It shows what a price-only split would earn, so the cost of the AI's judgement is visible |
-| **Explain** | Writes the advice and a one-line reason for each buyer, in English or Kiswahili | Rejects any answer that mentions a price, weight, distance or percentage not in the evidence |
+| **Explain** | Writes the advice and a one-line reason for each buyer **in the language the farmer used**: English, Kiswahili, or the same natural mix for people who code-switch or speak Sheng. Nobody has to change a setting | Rejects any answer that mentions a price, weight, distance or percentage not in the evidence |
 
 If Gemini is unavailable, slow, or its answer breaks a rule, the app still works: it falls back to the manual form, the price-only split and a rule-based summary, all clearly labelled.
 

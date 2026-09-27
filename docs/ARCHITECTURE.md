@@ -22,6 +22,12 @@ Express API (Node/TypeScript)
 4. **AI split and advice:** `POST /api/explain` recomputes the analysis on the server (it never trusts evidence from the client) and asks Gemini. The advice types out word by word after it has been checked. We don't stream raw tokens, because the number check needs the whole answer.
 5. **Confirm with buyers:** `POST /api/requests` for each buyer in the split. The farmer's screen polls for answers every 5 seconds.
 
+## Languages
+
+- **App language:** the EN/SW switch translates every screen (`client/src/i18n.tsx`; each string is written in both languages side by side). It's remembered on the phone.
+- **Reply language:** when Gemini reads what the person said, it also reports the language used: `en`, `sw` or `mixed`. The advice and buyer reasons are written in that language; for `mixed` the model is told to code-switch the way Kenyans do. If the farmer used the manual form, the app language is used. The rule-based fallback uses Kiswahili for mixed speakers, since templates can't mix naturally.
+- **Understanding notes** ("28 bags × 90 kg") follow the app language.
+
 ## Matching (deterministic)
 
 1. **Eligible buyers:** crop fits (a mixed-beans buyer takes any bean variety), the buyer's date window covers the harvest date (starting up to 3 days after still counts), and at least 10 kg of demand is still open that week.

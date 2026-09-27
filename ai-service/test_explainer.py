@@ -83,3 +83,9 @@ def test_endpoint_returns_503_without_api_key(monkeypatch):
     response = TestClient(main.app).post("/explain", json={"evidence": EVIDENCE, "language": "en"})
     assert response.status_code == 503
     assert "GEMINI_API_KEY" in response.json()["error"]
+
+
+def test_reply_language_follows_the_farmer():
+    assert "simple English" in explainer.system_prompt("en")
+    assert "simple Kiswahili" in explainer.system_prompt("sw")
+    assert "mix of" in explainer.system_prompt("mixed")

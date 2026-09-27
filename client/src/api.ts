@@ -48,7 +48,7 @@ export type ManageView = {
   requests: { id: string; kg: number; harvestDate: string; farmerCounty: string; status: RequestStatus['status']; period: string; remainingInPeriod: number }[];
 };
 
-export type Understood<F> = { fields: F; transcript?: string | null; notes: string[]; unclear: string[]; model: string; latencyMs: number };
+export type Understood<F> = { fields: F; language?: 'en' | 'sw' | 'mixed' | null; transcript?: string | null; notes: string[]; unclear: string[]; model: string; latencyMs: number };
 export type HarvestFields = { crop: string | null; county: string | null; harvestKg: number | null; harvestDate: string | null };
 export type ListingFields = {
   businessName: string | null; businessType: string | null; crop: string | null; county: string | null; town: string | null;
@@ -80,8 +80,8 @@ export const api = {
   meta: () => request<Meta>('/api/meta'),
   analyze: (body: object) => request<Analysis>('/api/analyze', { method: 'POST', body: JSON.stringify(body) }),
   explain: (body: object) => request<AiAdvice>('/api/explain', { method: 'POST', body: JSON.stringify(body) }),
-  understandHarvest: (body: { text?: string; audioBase64?: string; mimeType?: string }) => request<Understood<HarvestFields>>('/api/understand/harvest', { method: 'POST', body: JSON.stringify(body) }),
-  understandListing: (body: { text?: string; audioBase64?: string; mimeType?: string }) => request<Understood<ListingFields>>('/api/understand/listing', { method: 'POST', body: JSON.stringify(body) }),
+  understandHarvest: (body: { text?: string; audioBase64?: string; mimeType?: string; uiLang?: string }) => request<Understood<HarvestFields>>('/api/understand/harvest', { method: 'POST', body: JSON.stringify(body) }),
+  understandListing: (body: { text?: string; audioBase64?: string; mimeType?: string; uiLang?: string }) => request<Understood<ListingFields>>('/api/understand/listing', { method: 'POST', body: JSON.stringify(body) }),
   listings: () => request<{ listings: Listing[] }>('/api/listings'),
   postListing: (body: object) => request<{ listing: Listing; manageToken: string }>('/api/listings', { method: 'POST', body: JSON.stringify(body) }),
   sendRequest: (body: { listingId: string; crop: string; kg: number; harvestDate: string; county: string }) => request<{ request: { id: string } }>('/api/requests', { method: 'POST', body: JSON.stringify(body) }),
