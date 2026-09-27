@@ -20,6 +20,7 @@ export function BuyView({ meta }: { meta: Meta }) {
   const [listings, setListings] = useState<Listing[]>([]);
   const [status, setStatus] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const cropLabel = (id: string) => meta.crops.find(c => c.id === id)?.label ?? id;
 
   useEffect(() => { api.listings().then(r => setListings(r.listings)).catch(() => setStatus({ kind: 'error', text: t('Could not load buyer posts.', 'Imeshindwa kupakia matangazo ya wanunuzi.') })); }, []);
@@ -65,8 +66,7 @@ export function BuyView({ meta }: { meta: Meta }) {
     {mode === 'describe' && <>
       <SayIt
         title={t('What do you want to buy?', 'Unataka kununua nini?')}
-        subtitle={t('Say it, or paste the message you\'d send to a traders\' WhatsApp group. I\'ll turn it into a post farmers can find.',
-          'Sema, au bandika ujumbe ambao ungetuma kwenye kikundi cha WhatsApp cha wafanyabiashara. Nitaugeuza kuwa tangazo ambalo wakulima wanaweza kuona.')}
+        subtitle={t('Say it, or paste your usual WhatsApp message.', 'Sema, au bandika ujumbe wako wa kawaida wa WhatsApp.')}
         voice
         placeholder={t('Paste your WhatsApp message or describe what you need', 'Bandika ujumbe wako wa WhatsApp au eleza unachohitaji')}
         example="Tunanunua nyanya kg 500 kila wiki, bei 80 kwa kilo. Tuko Kibuye Kisumu, tunakuja shambani. Kibuye Fresh Traders"
@@ -113,7 +113,7 @@ export function BuyView({ meta }: { meta: Meta }) {
     </form>}
 
     <h3 className="section">{t('Current buyer demand', 'Mahitaji ya wanunuzi sasa')} <span>{listings.length}</span></h3>
-    {listings.map(l => <article className="card listing" key={l.id}>
+    {(showAll ? listings : listings.slice(0, 3)).map(l => <article className="card listing" key={l.id}>
       <div className="buyer-head">
         <div><h4>{l.businessName}</h4><p className="muted">{cropLabel(l.crop)} · {l.town}, {l.county}{l.isDemo && <span className="pill demo">{t('demo', 'mfano')}</span>}</p></div>
         <div className="net"><strong>{l.pricePerKg}</strong><span>KES/kg</span></div>
@@ -124,6 +124,9 @@ export function BuyView({ meta }: { meta: Meta }) {
         <a className="contact-action call" href={`tel:${l.contactPhone}`}>{t('Call', 'Piga simu')}</a>
       </div>}
     </article>)}
+    {listings.length > 3 && <button type="button" className="link" onClick={() => setShowAll(!showAll)}>
+      {showAll ? t('Show fewer', 'Onyesha machache') : t(`Show all ${listings.length}`, `Onyesha yote ${listings.length}`)}
+    </button>}
   </>;
 }
 

@@ -22,6 +22,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .brand { display: flex; align-items: center; gap: 10px; }
 .wordmark { font: 700 18px Fraunces, Georgia, serif; letter-spacing: -.3px; }
 .wordmark b { color: var(--green-2); }
+.wordmark small { display: block; margin-top: 1px; font: 600 10.5px Manrope, system-ui, sans-serif; letter-spacing: .2px; color: var(--muted); }
 .lang { display: flex; padding: 3px; border-radius: 999px; background: #ece5d4; }
 .lang button { border: 0; background: none; padding: 6px 12px; border-radius: 999px; font: 700 12px Manrope, system-ui, sans-serif; color: var(--muted); cursor: pointer; transition: background .2s, color .2s; }
 .lang button.on { background: var(--surface); color: var(--green); box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
@@ -45,10 +46,10 @@ h4 { font-size: 15px; margin: 0; }
 a { color: var(--green-2); }
 
 /* Hero */
-.hero { position: relative; overflow: hidden; margin: 4px 0 14px; padding: 18px 18px 64px; border-radius: var(--radius); background: linear-gradient(180deg, #eaf3dc 0%, #f4efdc 100%); animation: fadeUp .35s ease both; }
-.field-art { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 88px; }
+.hero { position: relative; overflow: hidden; margin: 4px 0 12px; padding: 14px 16px 58px; border-radius: var(--radius); background: linear-gradient(180deg, #eaf3dc 0%, #f4efdc 100%); animation: fadeUp .35s ease both; }
+.field-art { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 54px; }
 .hero-kicker { position: relative; margin: 0; font: 700 13px Manrope, system-ui, sans-serif; color: var(--green-2); letter-spacing: .3px; }
-.hero-line { position: relative; margin: 4px 0 0; max-width: 250px; font: 600 18px/1.3 Fraunces, Georgia, serif; color: var(--green); }
+.hero-line { position: relative; margin: 2px 0 0; max-width: 260px; font: 600 16px/1.3 Fraunces, Georgia, serif; color: var(--green); }
 
 /* Forms */
 .form { background: var(--surface); }
@@ -74,7 +75,7 @@ button.link:active { opacity: .6; }
 /* Voice-first input */
 .sayit { padding: 22px 18px 18px; }
 .voice { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 6px 0 4px; }
-.mic-btn { position: relative; display: grid; place-items: center; width: 84px; height: 84px; border: 0; border-radius: 50%; color: #fff; cursor: pointer; background: radial-gradient(circle at 35% 30%, #3b8a5a, var(--green)); box-shadow: 0 10px 24px rgba(31, 90, 61, .3), inset 0 -3px 0 rgba(0, 0, 0, .12); transition: transform .12s; }
+.mic-btn { position: relative; display: grid; place-items: center; width: 76px; height: 76px; border: 0; border-radius: 50%; color: #fff; cursor: pointer; background: radial-gradient(circle at 35% 30%, #3b8a5a, var(--green)); box-shadow: 0 10px 24px rgba(31, 90, 61, .3), inset 0 -3px 0 rgba(0, 0, 0, .12); transition: transform .12s; }
 .mic-btn:active { transform: scale(.95); }
 .mic-btn::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 2px solid rgba(46, 125, 79, .18); }
 .mic-btn.on { background: radial-gradient(circle at 35% 30%, #d0613f, var(--red)); box-shadow: 0 10px 24px rgba(177, 69, 47, .35); }
@@ -223,3 +224,14 @@ button.primary.small-btn { width: auto; margin: 0; min-height: 38px; box-shadow:
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes ripple { from { transform: scale(1); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* Compact cards and folded sections */
+.buyer-line { margin: 10px 0 0; }
+.more { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.more > summary, .fold > summary { cursor: pointer; font-weight: 700; color: var(--green); list-style: none; }
+.more > summary { font-size: 13px; }
+.more > summary::-webkit-details-marker, .fold > summary::-webkit-details-marker { display: none; }
+.more > summary::after, .fold > summary::after { content: ' ▾'; }
+.more[open] > summary::after, .fold[open] > summary::after { content: ' ▴'; }
+.fold > summary { display: flex; align-items: center; gap: 6px; font-size: 15px; color: var(--ink); }
+.negotiation-title { margin: 0; font-size: 13px; font-weight: 700; color: var(--green); }

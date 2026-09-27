@@ -29,7 +29,7 @@ function App() {
 
   return <LangContext.Provider value={lang}><div className="app">
     <header className="top">
-      <div className="brand"><LogoMark /><span className="wordmark">Farmconnect <b>AI</b></span></div>
+      <div className="brand"><LogoMark /><span className="wordmark">Niuze <b>Wapi?</b><small>by Farmconnect AI</small></span></div>
       <div className="lang" role="group" aria-label={t('App language', 'Lugha ya programu')}>
         {(['en', 'sw'] as const).map(l => <button key={l} className={lang === l ? 'on' : ''} onClick={() => setLang(l)} aria-pressed={lang === l}>{l.toUpperCase()}</button>)}
       </div>

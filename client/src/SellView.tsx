@@ -64,8 +64,7 @@ export function SellView({ meta }: { meta: Meta }) {
       </section>
       <SayIt
         title={t('Where should I sell my harvest?', 'Niuze mavuno yangu wapi?')}
-        subtitle={t('Tell me what you grow, where, how much and when, in English, Kiswahili or both. I\'ll find buyers and answer in the language you use.',
-          'Niambie unalima nini, wapi, kiasi gani na lini, kwa Kiswahili, Kiingereza au vyote. Nitakutafutia wanunuzi na kukujibu kwa lugha unayotumia.')}
+        subtitle={t('Say what you grow, where, how much and when.', 'Sema unalima nini, wapi, kiasi gani na lini.')}
         voice
         placeholder={t('e.g. I have 10 bags of beans in Webuye, ready next week', 'mf. Nina magunia 10 ya maharagwe Webuye, tayari wiki ijayo')}
         example="Nina magunia kumi ya maharagwe Webuye, nitauza wiki ijayo"
@@ -115,6 +114,13 @@ export function SellView({ meta }: { meta: Meta }) {
         <div className="net"><strong>{m.netPerKg}</strong><span>{t('KES/kg net', 'KES/kg halisi')}</span></div>
       </div>
       {notes.get(m.listingId) && <p className="ai-note"><span className="spark">✦</span> {notes.get(m.listingId)}</p>}
+      <p className="buyer-line muted small">KES {m.pricePerKg}/kg · {m.collectsFromFarm ? t('collects from farm', 'anachukua shambani') : t(`transport −${m.transportPerKg}/kg`, `usafiri −${m.transportPerKg}/kg`)} · {t('needs', 'anahitaji')} {kg(m.demandKg)}{m.frequency === 'weekly' ? t('/wk', '/wiki') : ''}</p>
+      {m.contactPhone && <div className="contact-actions">
+        {whatsappPhone(m.contactPhone) && <a className="contact-action whatsapp" href={`https://wa.me/${whatsappPhone(m.contactPhone)}`} target="_blank" rel="noreferrer">{t('WhatsApp', 'WhatsApp')}</a>}
+        <a className="contact-action call" href={`tel:${m.contactPhone}`}>{t('Call', 'Piga simu')}</a>
+      </div>}
+      <details className="more">
+        <summary>{t('Details and negotiation help', 'Maelezo na msaada wa kujadiliana')}</summary>
       <p className="desc">{m.description}</p>
       <dl className="facts">
         <div><dt>{t('Offer', 'Bei')}</dt><dd>KES {m.pricePerKg}/kg</dd></div>
@@ -125,28 +131,28 @@ export function SellView({ meta }: { meta: Meta }) {
       {m.alreadyCoveredKg > 0 && <p className="muted small">{t(
         `Wants ${kg(m.totalDemandKg)}${m.frequency === 'weekly' ? ' a week' : ''}, already has ${kg(m.alreadyCoveredKg)}.`,
         `Anahitaji ${kg(m.totalDemandKg)}${m.frequency === 'weekly' ? ' kwa wiki' : ''}, tayari ana ${kg(m.alreadyCoveredKg)}.`)}</p>}
-      <details className="negotiation">
-        <summary>{t('Talk through a negotiation with AI', 'Jadili mazungumzo na AI')}</summary>
+      <div className="negotiation">
+        <p className="negotiation-title">{t('Negotiate with AI help', 'Jadiliana kwa msaada wa AI')}</p>
         <NegotiationChat input={result.input} listingId={m.listingId} replyLang={language} />
+      </div>
       </details>
-      {m.contactPhone && <div className="contact-actions">
-        {whatsappPhone(m.contactPhone) && <a className="contact-action whatsapp" href={`https://wa.me/${whatsappPhone(m.contactPhone)}`} target="_blank" rel="noreferrer">{t('WhatsApp', 'WhatsApp')}</a>}
-        <a className="contact-action call" href={`tel:${m.contactPhone}`}>{t('Call', 'Piga simu')}</a>
-      </div>}
     </article>)}
 
-    <h3 className="section">{t('Public wholesale markets', 'Masoko ya jumla ya umma')} <span>KAMIS</span></h3>
-    <div className="card">
+    <details className="card fold">
+      <summary>{t('Public market prices', 'Bei za masoko ya umma')} <span className="pill">KAMIS</span></summary>
       <p className="muted small">{t('Reference prices, not buyer offers. Median wholesale over the last 30 days, minus estimated transport.', 'Bei za kulinganisha, si ofa za wanunuzi. Bei ya kati ya jumla kwa siku 30 zilizopita, ukiondoa makadirio ya usafiri.')}</p>
       {result.marketReferences.map(r => <div className="ref" key={r.market + r.county}><div><b>{r.market}</b><span className="muted"> · {r.county} · {r.distanceKm} km</span></div><div className="mono">{r.wholesalePerKg} → <b>{r.netPerKg}</b></div></div>)}
       <p className="muted small">{t('Source', 'Chanzo')}: <a href={result.priceSource.url} target="_blank" rel="noreferrer">{result.priceSource.name}</a>, {t('retrieved', 'ilipatikana')} {result.priceSource.retrievedAt}.</p>
-    </div>
+    </details>
 
-    <details className="card how">
+    <details className="card how fold">
       <summary>{t('How we calculated this', 'Jinsi tulivyohesabu')}</summary>
       <p>{t(
         `Net KES/kg = buyer price − transport − handling. Transport ≈ KES ${result.assumptions.transportKesPerKgKm} per kg per km of estimated road distance (zero if the buyer collects). Handling ≈ KES ${result.assumptions.handlingKesPerKg}/kg. Distances are estimated between county towns. Buyers only show demand they still have open.`,
         `KES/kg halisi = bei ya mnunuzi − usafiri − gharama za kupakia. Usafiri ≈ KES ${result.assumptions.transportKesPerKgKm} kwa kila kilo kwa kila km ya makadirio ya barabara (sifuri ikiwa mnunuzi anakuja kuchukua). Gharama za kupakia ≈ KES ${result.assumptions.handlingKesPerKg}/kg. Umbali ni makadirio kati ya miji ya kaunti. Wanunuzi wanaonyesha tu mahitaji ambayo bado yako wazi.`)}</p>
+      {comparison && <p>{t(
+        `The "more than the nearest market" figure uses the KAMIS wholesale price at ${comparison.market} (KES ${comparison.wholesalePerKg}/kg) minus transport. Farm-gate prices are usually lower, so the real gain may be bigger.`,
+        `Kiasi cha "zaidi ya soko lililo karibu" kinatumia bei ya jumla ya KAMIS katika ${comparison.market} (KES ${comparison.wholesalePerKg}/kg) ukiondoa usafiri. Bei za shambani huwa chini zaidi, kwa hivyo faida halisi inaweza kuwa kubwa zaidi.`)}</p>}
       <p>{t(
         'The AI chooses the split and explains it, using the evidence below. Code checks that every buyer can take what the AI gives them and that the total fits your harvest, then calculates the money. The AI\'s text is rejected if it mentions figures that aren\'t in the evidence. If anything fails, you get the price-only split and a rule-based summary.',
         'AI inachagua mgawanyo na kuueleza, ikitumia ushahidi ulio hapa chini. Programu inakagua kwamba kila mnunuzi anaweza kuchukua kiasi alichopewa na AI na kwamba jumla inatosha mavuno yako, kisha inahesabu pesa. Maandishi ya AI yanakataliwa ikiwa yanataja takwimu ambazo haziko kwenye ushahidi. Chochote kikishindikana, unapata mgawanyo kwa bei pekee na muhtasari wa kawaida.')}</p>
@@ -197,9 +203,9 @@ function PlanCard({ result, plan, comparison, advice, rulesPlanNet }: { result: 
   return <section className="card plan">
     {comparison && <div className={`gain${comparison.differenceKes > 0 ? '' : ' flat'}`}>
       {comparison.differenceKes > 0
-        ? <><strong>+{kes(comparison.differenceKes)}</strong><span>{comparison.differencePct !== null && `(+${comparison.differencePct}%) `}{t(
-          `more than selling everything at ${comparison.market}, the nearest public market (${comparison.distanceKm} km)`,
-          `zaidi ya kuuza yote katika ${comparison.market}, soko la umma lililo karibu (km ${comparison.distanceKm})`)}</span></>
+        ? <><strong>+{kes(comparison.differenceKes)}</strong><span>{t(
+          `more than selling it all at the nearest market (${comparison.market})`,
+          `zaidi ya kuuza yote katika soko lililo karibu (${comparison.market})`)}</span></>
         : <><strong>{t('No gain', 'Hakuna faida ya ziada')}</strong><span>{t(
           `Selling everything at ${comparison.market} (${comparison.distanceKm} km) earns about the same or more: ${kes(comparison.baselineNet)}`,
           `Kuuza yote katika ${comparison.market} (km ${comparison.distanceKm}) kunaleta kiasi sawa au zaidi: ${kes(comparison.baselineNet)}`)}</span></>}
@@ -214,9 +220,7 @@ function PlanCard({ result, plan, comparison, advice, rulesPlanNet }: { result: 
     {plan.source === 'ai' && priceOnlyDiff > 0 && <p className="muted small">{t(
       `A price-only split would earn ${kes(priceOnlyDiff)} more (${kes(rulesPlanNet)}). The AI traded that for the reasons in its advice.`,
       `Mgawanyo kwa bei pekee ungeleta ${kes(priceOnlyDiff)} zaidi (${kes(rulesPlanNet)}). AI iliacha hiyo kwa sababu ilizoeleza kwenye ushauri wake.`)}</p>}
-    <p className="muted small">{t('Estimated income after transport, if every buyer confirms.', 'Makadirio ya mapato baada ya usafiri, ikiwa kila mnunuzi atathibitisha.')}{comparison && ' ' + t(
-      `Comparison uses the KAMIS wholesale price at ${comparison.market} (KES ${comparison.wholesalePerKg}/kg) minus transport. Farm-gate prices are usually lower, so the real gain may be bigger.`,
-      `Ulinganisho unatumia bei ya jumla ya KAMIS katika ${comparison.market} (KES ${comparison.wholesalePerKg}/kg) ukiondoa usafiri. Bei za shambani huwa chini zaidi, kwa hivyo faida halisi inaweza kuwa kubwa zaidi.`)}</p>
+    <p className="muted small">{t('Estimated income after transport, if every buyer confirms.', 'Makadirio ya mapato baada ya usafiri, ikiwa kila mnunuzi atathibitisha.')}</p>
     {!aiPending && <ConfirmWithBuyers plan={plan} input={input} />}
   </section>;
 }

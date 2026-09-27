@@ -1,4 +1,4 @@
-# Submission pack: Farmconnect AI
+# Submission pack: Niuze Wapi? by Farmconnect AI
 
 Copy these answers into the submission form. Fill in the [bracketed] parts.
 
@@ -17,11 +17,11 @@ Copy these answers into the submission form. Fill in the [bracketed] parts.
 
 ## Title
 
-**Farmconnect AI: speak your harvest, find your buyer**
+**Niuze Wapi? ("Where should I sell?") by Farmconnect AI: speak your harvest, find your buyer**
 
 ## Summary (150 words max)
 
-Farmconnect AI helps Kenyan smallholder farmers decide where to sell a harvest. A farmer speaks in Kiswahili or English, for example "Nina magunia 28 ya maharagwe Webuye", and Gemini turns it into crop, place, quantity and date for the farmer to confirm. Farmconnect finds buyers with open demand that week, calculates what each really pays after transport using real KAMIS market prices, and the AI splits the harvest across buyers and explains why in the farmer's language. One tap asks those buyers to confirm. Buyers answer from their phones, and their remaining demand updates live. Buyers post demand by speaking or pasting the WhatsApp message they already send. Every number is calculated by code: AI answers that invent figures or break demand limits are rejected, with a labelled rule-based fallback. It runs as a light mobile web app on any phone.
+Niuze Wapi? by Farmconnect AI helps Kenyan smallholder farmers decide where to sell a harvest. A farmer speaks in Kiswahili or English, for example "Nina magunia 28 ya maharagwe Webuye", and Gemini turns it into crop, place, quantity and date for the farmer to confirm. Farmconnect finds buyers with open demand that week, calculates what each really pays after transport using real KAMIS market prices, and the AI splits the harvest across buyers and explains why in the farmer's language. One tap asks those buyers to confirm. Buyers answer from their phones, and their remaining demand updates live. Buyers post demand by speaking or pasting the WhatsApp message they already send. Every number is calculated by code: AI answers that invent figures or break demand limits are rejected, with a labelled rule-based fallback. It runs as a light mobile web app on any phone.
 
 ## Problem
 
@@ -44,6 +44,8 @@ A voice-first mobile web app that connects both sides:
 - The AI answers in the language you use (English, Kiswahili, or a natural mix for Sheng speakers), with no setting to change; the app itself switches between English and Kiswahili
 - Advice typed out after it has been checked
 - Farmer-to-buyer confirmation requests with live status on both phones
+- AI negotiation coach per buyer: a tailored opening line, then help with each reply (names, phone numbers and emails removed before anything reaches the AI)
+- WhatsApp and Call buttons for buyers who agree to share their number
 - Live buyer demand: weekly volume minus what's already bought or accepted
 - Works when the AI is down: manual form, price-only split and rule-based advice, all labelled
 
@@ -93,7 +95,7 @@ Code does unit conversion, distance, transport, all money, and demand bookkeepin
 
 ## Slides (6 slides)
 
-1. **Title:** Farmconnect AI, "Speak your harvest, find your buyer". Team names. A phone screenshot of the mic screen.
+1. **Title:** Niuze Wapi? by Farmconnect AI, "Speak your harvest, find your buyer". Team names. A phone screenshot of the mic screen.
 2. **Problem:** Farmers sell to whoever comes first. The best price isn't the best deal after transport and spoilage. Prices sit in government tables; demand sits in WhatsApp groups.
 3. **Solution:** a three-step picture: speak → confirm → buyers, split and advice, plus "ask buyers to confirm". Buyer side: paste a WhatsApp message → post → accept.
 4. **How the AI works:** the table from "How we use AI". The AI understands and judges; code calculates; checks and fallback. Show the "price-only split would earn KES X more" line as proof the AI makes trade-offs openly.
@@ -108,4 +110,4 @@ Code does unit conversion, distance, transport, all money, and demand bookkeepin
 | 12–30 s | Tap the mic and speak the beans sentence; "Here's what I understood" | "I just speak, in Kiswahili. Gemini understands 28 bags of beans in Webuye, next week. Our code converts that to 2,520 kg, and I confirm." |
 | 30–52 s | Results: gain, AI split, reason per buyer, tap SW | "Real government prices, buyers who still need beans this week, and what each really pays after transport. The AI splits my harvest across two buyers and says why, in Kiswahili too. Every number is calculated by code; the AI can't invent figures." |
 | 52–72 s | Tap "Yes, ask them" → buyer phone → Accept → ✓ Confirmed | "One tap asks the buyers. The buyer posted by pasting their usual WhatsApp message. They accept, I see it confirmed, and their remaining demand updates." |
-| 72–90 s | Stop the AI service → offline summary; end card | "If the AI goes down, Farmconnect still works with a labelled fallback. Next: SMS for feature phones and verified buyers. Farmconnect AI: speak your harvest, find your buyer." |
+| 72–90 s | Stop the AI service → offline summary; end card | "If the AI goes down, Farmconnect still works with a labelled fallback. Next: SMS for feature phones and verified buyers. Niuze Wapi: speak your harvest, find your buyer." |
